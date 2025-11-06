@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Upload Mejorado - Demo</title>
+    <style>
+        :root {
+            --accent: #6236ff;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --card-bg: rgba(26, 26, 26, 0.8);
+            --border: rgba(98, 54, 255, 0.2);
+            --radius: 12px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .demo-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, var(--accent), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .upload-areas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Incluir todos los estilos del sistema moderno */
+        .modern-upload-area {
+            border: 2px dashed rgba(98, 54, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(98, 54, 255, 0.05), rgba(168, 85, 247, 0.05));
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .modern-upload-area:hover {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(98, 54, 255, 0.1), rgba(168, 85, 247, 0.1));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(98, 54, 255, 0.3);
+        }
+
+        .modern-upload-area.dragover {
+            border-color: #00ff9f;
+            background: linear-gradient(135deg, rgba(0, 255, 159, 0.1), rgba(98, 54, 255, 0.1));
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 255, 159, 0.4);
+            animation: pulse-neon 1.5s infinite;
+        }
+
+        @keyframes pulse-neon {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 159, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(0, 255, 159, 0.6); }
+        }
+
+        .upload-initial {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            color: var(--accent);
+            filter: drop-shadow(0 0 8px rgba(98, 54, 255, 0.3));
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        .upload-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .preview-image-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 2px solid rgba(98, 54, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .preview-image-container:hover .preview-overlay {
+            opacity: 1;
+        }
+
+        .upload-success {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            animation: successPulse 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes successPulse {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #00ff9f;
+            filter: drop-shadow(0 0 12px rgba(0, 255, 159, 0.5));
+        }
+
+        .success-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00ff9f;
+            margin-bottom: 8px;
+        }
+
+        .preview-filename,
+        .success-filename {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 500;
+            margin-bottom: 6px;
+            max-width: 250px;
+            word-break: break-word;
+            text-align: center;
+        }
+
+        .demo-info {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 2rem;
+        }
+
+        .demo-info h3 {
+            color: var(--accent);
+            margin-top: 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(98, 54, 255, 0.1);
+        }
+
+        .feature-list li:before {
+            content: "✨";
+            margin-right: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .upload-areas {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1 class="demo-title">🎨 Sistema de Upload Mejorado</h1>
+        
+        <div class="upload-areas">
+            <!-- Área de imagen -->
+            <div class="form-group">
+                <label>📸 Imagen de Preview</label>
+                <div class="modern-upload-area" id="imageUploadArea">
+                    <div class="upload-initial" id="imageInitialState">
+                        <div class="upload-icon">🖼️</div>
+                        <div class="upload-text">Arrastra tu imagen aquí</div>
+                        <div class="upload-hint">o haz clic para seleccionar (PNG, JPG, WEBP)</div>
+                    </div>
+                    
+                    <div class="upload-preview hidden" id="imagePreviewState">
+                        <div class="preview-image-container">
+                            <img id="previewImg" src="" alt="Preview">
+                            <div class="preview-overlay">
+                                <div class="change-text">Cambiar imagen</div>
+                            </div>
+                        </div>
+                        <div class="preview-filename" id="imageFilename"></div>
+                    </div>
+                    
+                    <input type="file" id="imageInput" accept="image/*">
+                </div>
+            </div>
+
+            <!-- Área de archivo de diseño -->
+            <div class="form-group">
+                <label>📦 Archivo de Diseño</label>
+                <div class="modern-upload-area" id="fileUploadArea">
+                    <div class="upload-initial" id="fileInitialState">
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-text">Arrastra tu archivo aquí</div>
+                        <div class="upload-hint">ZIP, PSD, AI, PDF, etc.</div>
+                    </div>
+                    
+                    <div class="upload-success hidden" id="fileSuccessState">
+                        <div class="success-icon">📦</div>
+                        <div class="success-text">Archivo subido correctamente</div>
+                        <div class="success-filename" id="fileFilename"></div>
+                    </div>
+                    
+                    <input type="file" id="fileInput" accept=".zip,.rar,.psd,.ai,.pdf,.svg,.eps">
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-info">
+            <h3>🚀 Características Implementadas</h3>
+            <ul class="feature-list">
+                <li>Drag & Drop con efectos visuales neón</li>
+                <li>Preview de imágenes con animaciones suaves</li>
+                <li>Validación de tipos y tamaños de archivo</li>
+                <li>Efectos glass y backdrop blur</li>
+                <li>Animaciones CSS3 avanzadas</li>
+                <li>Responsive design</li>
+                <li>Estados interactivos (hover, dragover, success)</li>
+                <li>Notificaciones toast integradas</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Simulación del sistema de upload
+        class DemoUploadSystem {
+            constructor() {
+                this.initImageUpload();
+                this.initFileUpload();
+            }
+
+            initImageUpload() {
+                const area = document.getElementById('imageUploadArea');
+                const input = document.getElementById('imageInput');
+                
+                area.addEventListener('click', () => input.click());
+                area.addEventListener('dragover', this.handleDragOver.bind(this));
+                area.addEventListener('dragleave', this.handleDragLeave.bind(this));
+                area.addEventListener('drop', (e) => this.handleImageDrop(e));
+                input.addEventListener('change', (e) => this.handleImageSelect(e));
+            }
+
+            initFileUpload() {
+                const area = document.getElementById('fileUploadArea');
+                const input = document.getElementById('fileInput');
+                
+                area.addEventListener('click', () => input.click());
+                area.addEventListener('dragover', this.handleDragOver.bind(this));
+                area.addEventListener('dragleave', this.handleDragLeave.bind(this));
+                area.addEventListener('drop', (e) => this.handleFileDrop(e));
+                input.addEventListener('change', (e) => this.handleFileSelect(e));
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                e.currentTarget.classList.add('dragover');
+            }
+
+            handleDragLeave(e) {
+                if (!e.currentTarget.contains(e.relatedTarget)) {
+                    e.currentTarget.classList.remove('dragover');
+                }
+            }
+
+            handleImageDrop(e) {
+                e.preventDefault();
+                e.currentTarget.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type.startsWith('image/')) {
+                    this.showImagePreview(files[0]);
+                }
+            }
+
+            handleFileDrop(e) {
+                e.preventDefault();
+                e.currentTarget.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.showFileSuccess(files[0]);
+                }
+            }
+
+            handleImageSelect(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    this.showImagePreview(file);
+                }
+            }
+
+            handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.showFileSuccess(file);
+                }
+            }
+
+            showImagePreview(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imageFilename').textContent = file.name;
+                    
+                    document.getElementById('imageInitialState').classList.add('hidden');
+                    document.getElementById('imagePreviewState').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            showFileSuccess(file) {
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                document.getElementById('fileFilename').textContent = `${file.name} (${size} MB)`;
+                
+                document.getElementById('fileInitialState').classList.add('hidden');
+                document.getElementById('fileSuccessState').classList.remove('hidden');
+            }
+        }
+
+        // Inicializar sistema demo
+        document.addEventListener('DOMContentLoaded', () => {
+            new DemoUploadSystem();
+        });
+    </script>
+</body>
+</html>

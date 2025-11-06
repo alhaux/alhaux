@@ -1,0 +1,162 @@
+/* Navegación mejorada */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  color: var(--texto-gris);
+  font-size: 0.95rem;
+  transition: all var(--transition-fast);
+}
+
+.nav-link:hover {
+  color: var(--texto-claro);
+  background: rgba(156,107,255,0.1);
+  transform: translateY(-2px);
+}
+
+.nav-link .icon {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Categorías mejoradas */
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  color: var(--texto-gris);
+  transition: all var(--transition-fast);
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--borde-suave);
+}
+
+.category-link:hover {
+  background: rgba(156,107,255,0.1);
+  border-color: var(--morado);
+  transform: translateX(5px);
+  color: var(--texto-claro);
+}
+
+.category-link.active {
+  background: var(--morado);
+  color: white;
+  border-color: var(--morado);
+}
+
+.category-count {
+  margin-left: auto;
+  background: rgba(255,255,255,0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+/* Redes sociales mejoradas */
+.social-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  color: var(--texto-claro);
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--borde-suave);
+  transition: all var(--transition-fast);
+}
+
+.social-link:hover {
+  transform: translateX(5px);
+}
+
+.social-link.facebook:hover {
+  background: rgba(66,103,178,0.2);
+  border-color: #4267B2;
+}
+
+.social-link.tiktok:hover {
+  background: rgba(0,0,0,0.3);
+  border-color: #000000;
+}
+
+.social-link.instagram:hover {
+  background: linear-gradient(45deg, rgba(405,93,115,0.2), rgba(252,204,99,0.2));
+  border-image: linear-gradient(45deg, #405d73, #fccc63) 1;
+}
+
+.follower-count {
+  margin-left: auto;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--morado);
+}
+
+/* Badges y contadores */
+.badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--morado);
+  color: white;
+}
+
+.badge.hot {
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+}
+
+.badge.new {
+  background: linear-gradient(45deg, #00c6ff, #0072ff);
+}
+
+/* Efectos de hover para tarjetas */
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(156,107,255,0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.card:hover::before {
+  transform: translateX(100%);
+}
+
+/* Animaciones suaves */
+.animate-hover {
+  transition: transform var(--transition-mid);
+}
+
+.animate-hover:hover {
+  transform: translateY(-5px);
+}

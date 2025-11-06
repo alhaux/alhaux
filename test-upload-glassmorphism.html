@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload Areas - Admin Panel</title>
+    <link rel="stylesheet" href="../CSS/upload-styles.css">
+    <style>
+        :root {
+            --primary-violet: #8b5cf6;
+            --secondary-violet: #a855f7;
+            --neon-violet: #c084fc;
+            --glass-bg: rgba(139, 92, 246, 0.1);
+            --border-glass: rgba(139, 92, 246, 0.3);
+            --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #d1d5db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(17, 24, 39, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--neon-violet);
+        }
+
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🎨 Test Upload Areas Glassmorphism</h1>
+        
+        <div class="upload-section">
+            <!-- Área de imagen de preview -->
+            <div class="form-group">
+                <label class="upload-label">
+                    📸 Imagen de Preview
+                </label>
+                <div class="upload-area" id="fileUploadArea">
+                    <div class="upload-content" id="imageInitialContent">
+                        <div class="upload-icon">🖼️</div>
+                        <div class="upload-text">Arrastra tu imagen aquí</div>
+                        <div class="upload-hint">PNG, JPG, WEBP - Máximo 5MB</div>
+                        <button type="button" class="upload-button" onclick="document.getElementById('designImage').click()">
+                            Seleccionar archivo
+                        </button>
+                    </div>
+                    
+                    <div class="preview-container" id="imagePreview" style="display: none;">
+                        <div class="image-preview">
+                            <img id="previewImg" src="" alt="Preview">
+                            <div class="preview-overlay">Cambiar imagen</div>
+                        </div>
+                        <div class="file-name" id="imageFileName"></div>
+                    </div>
+                    
+                    <input type="file" id="designImage" class="file-input" accept="image/*">
+                </div>
+            </div>
+
+            <!-- Área de archivo de diseño -->
+            <div class="form-group">
+                <label class="upload-label">
+                    📦 Archivo de Diseño
+                </label>
+                <div class="upload-area" id="fileUploadAreaDesign">
+                    <div class="upload-content" id="fileInitialContent">
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-text">Arrastra tu archivo aquí</div>
+                        <div class="upload-hint">ZIP, PSD, AI, PDF, etc. - Máximo 50MB</div>
+                        <button type="button" class="upload-button" onclick="document.getElementById('designFile').click()">
+                            Seleccionar archivo
+                        </button>
+                    </div>
+                    
+                    <div class="file-success" id="fileSuccess" style="display: none;">
+                        <div class="success-icon">📦</div>
+                        <div class="success-text">Archivo subido correctamente</div>
+                        <div class="file-name" id="fileFileName"></div>
+                    </div>
+                    
+                    <input type="file" id="designFile" class="file-input" accept=".zip,.rar,.psd,.ai,.pdf,.svg,.eps,.png,.jpg,.jpeg">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../JS/upload-manager.js"></script>
+</body>
+</html>

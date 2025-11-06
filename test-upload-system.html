@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload - Design Reyes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #6236ff;
+            border-radius: 10px;
+            background: rgba(98, 54, 255, 0.05);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .btn {
+            background: #6236ff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #4a28cc; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test de Sistema de Upload</h1>
+            <p>Verifica que el upload funcione correctamente y aparezca en el catálogo</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Estado del Servidor</h3>
+            <div id="serverStatus" class="status info">Verificando conexión...</div>
+            <button onclick="checkServer()" class="btn">Verificar Servidor</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🔥 Estado de Firebase</h3>
+            <div id="firebaseStatus" class="status info">Verificando Firebase...</div>
+            <button onclick="checkFirebase()" class="btn">Verificar Firebase</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Contador de Diseños</h3>
+            <div id="designsCount" class="status info">Contando diseños...</div>
+            <button onclick="countDesigns()" class="btn">Contar Diseños</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Links Rápidos</h3>
+            <a href="admin.html" class="btn">Panel Admin</a>
+            <a href="Index.html" class="btn">Página Principal</a>
+            <button onclick="forceReload()" class="btn">Recargar Catálogo</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Instrucciones de Prueba</h3>
+            <ol>
+                <li><strong>Ir al Panel Admin</strong> - Haz clic en "Panel Admin"</li>
+                <li><strong>Subir un diseño</strong> - Completa el formulario y sube archivos</li>
+                <li><strong>Verificar mensaje de éxito</strong> - Debe aparecer "Catálogo actualizado"</li>
+                <li><strong>Ir a la página principal</strong> - Haz clic en "Página Principal"</li>
+                <li><strong>Verificar que aparezca</strong> - El nuevo diseño debe estar visible</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="../JS/catalog-sync.js"></script>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+            authDomain: "design-reyes.firebaseapp.com",
+            projectId: "design-reyes",
+            storageBucket: "design-reyes.appspot.com",
+            messagingSenderId: "454744557781",
+            appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+            measurementId: "G-KCEX0JCC76"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function checkServer() {
+            const status = document.getElementById('serverStatus');
+            try {
+                const response = await fetch('/');
+                if (response.ok) {
+                    status.className = 'status success';
+                    status.textContent = '✅ Servidor funcionando correctamente en puerto 8080';
+                } else {
+                    status.className = 'status error';
+                    status.textContent = '❌ Error del servidor: ' + response.status;
+                }
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ No se puede conectar al servidor: ' + error.message;
+            }
+        }
+
+        async function checkFirebase() {
+            const status = document.getElementById('firebaseStatus');
+            try {
+                await db.collection('designs').limit(1).get();
+                status.className = 'status success';
+                status.textContent = '✅ Firebase conectado correctamente';
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ Error de Firebase: ' + error.message;
+            }
+        }
+
+        async function countDesigns() {
+            const status = document.getElementById('designsCount');
+            try {
+                const snapshot = await db.collection('designs').get();
+                status.className = 'status success';
+                status.textContent = `✅ Hay ${snapshot.size} diseños en la base de datos`;
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ Error al contar: ' + error.message;
+            }
+        }
+
+        async function forceReload() {
+            try {
+                if (typeof forceReloadCatalog === 'function') {
+                    await forceReloadCatalog();
+                    alert('✅ Catálogo recargado');
+                } else {
+                    alert('❌ Función forceReloadCatalog no disponible');
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // Auto-verificar al cargar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkServer();
+                checkFirebase();
+                countDesigns();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

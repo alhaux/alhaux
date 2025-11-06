@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../img/LOGO DR SOLO BLANCO.png" type="image/png">
+  <title>Iniciar sesión | Design Reyes</title>
+  <style>
+    :root {
+      --bg-main: #050006;
+      --accent1: #9c6bff;
+      --accent2: #6f34ff;
+      --text: #ffffff;
+      --text-dim: #b8a9d9;
+      --card-bg: rgba(18,18,30,0.65);
+      --border: rgba(156,107,255,0.4);
+      --shadow: 0 0 40px rgba(162,91,255,0.35);
+      --gradient-btn: linear-gradient(90deg,#6236ff 0%,#b336ff 100%);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at 20% 20%, rgba(130,0,255,.25) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 80% 30%, rgba(0,120,255,.18) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 50% 80%, rgba(180,0,255,.22) 0%, rgba(0,0,0,0) 60%),
+                  var(--bg-main);
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 22px 22px;
+      opacity: .15;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    header {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+    .logo img {
+      height: 40px;
+      filter: drop-shadow(0 0 15px rgba(162,91,255,.8));
+    }
+    nav a {
+      color: var(--text);
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: var(--accent1);
+    }
+    .login-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 45px 35px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      animation: fadeIn 1s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .login-container h2 {
+      font-size: 1.6rem;
+      color: var(--accent1);
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 15px rgba(162,91,255,.6);
+    }
+    .login-form input {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .login-form input:focus {
+      border: 1px solid var(--accent1);
+      box-shadow: 0 0 15px rgba(162,91,255,.6);
+    }
+    .login-form button {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      border: none;
+      background: var(--gradient-btn);
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(162,91,255,0.4);
+      transition: all 0.3s ease;
+    }
+    .login-form button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px rgba(162,91,255,0.6);
+    }
+    .divider {
+      margin: 30px 0;
+      position: relative;
+      text-align: center;
+    }
+    .divider::before, .divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+    .divider span {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      background: var(--card-bg);
+      padding: 0 10px;
+    }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 11px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+    .social-btn:hover {
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 0 15px rgba(162,91,255,0.3);
+    }
+    .social-btn img {
+      width: 20px;
+      height: 20px;
+    }
+    
+    /* Nuevos estilos para login solo con Google */
+    .welcome-message {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(156,107,255,0.1);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    
+    .welcome-message p {
+      color: var(--text-dim);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    .google-main {
+      width: 100%;
+      padding: 16px 24px;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      transform: scale(1);
+      transition: all 0.3s ease;
+    }
+    
+    .google-main:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 30px rgba(66, 133, 244, 0.3);
+    }
+    
+    .login-benefits {
+      background: rgba(18,18,30,0.8);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(156,107,255,0.2);
+    }
+    
+    .login-benefits h3 {
+      color: var(--accent1);
+      margin-bottom: 16px;
+      font-size: 18px;
+      text-align: center;
+    }
+    
+    .login-benefits ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .login-benefits li {
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      font-size: 15px;
+      padding-left: 0;
+    }
+    
+    .login-benefits li:last-child {
+      margin-bottom: 0;
+    }
+    .login-footer {
+      margin-top: 22px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+    .login-footer a {
+      color: var(--accent1);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-top: 50px;
+    }
+    @media (max-width: 600px) {
+      .login-container {
+        padding: 35px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="../img/LOGO DR SOLO BLANCO.png" alt="Design Reyes">
+    </div>
+    <nav>
+      <a id="lnkHome" href="/">Inicio</a>
+      <a id="lnkRegister" href="/register">Registrarse</a>
+    </nav>
+  </header>
+
+  <section class="login-container">
+    <h2>Iniciar sesión</h2>
+    
+    <div class="welcome-message">
+      <p>Accede a tu cuenta usando Google para una experiencia segura y rápida</p>
+    </div>
+
+    <button id="googleSignIn" class="social-btn google-main">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      Iniciar sesión con Google
+    </button>
+
+    <button id="logoutBtn" class="social-btn" style="display:none; background:#e74c3c; color:white; margin-top:10px;">
+      Cerrar sesión
+    </button>
+
+    <div class="login-benefits">
+      <h3>✨ Beneficios de iniciar sesión:</h3>
+      <ul>
+        <li>🎨 Acceso al catálogo completo de diseños</li>
+        <li>📊 Seguimiento de tus descargas</li>
+        <li>💎 Gestión de tu membresía</li>
+        <li>🔒 Cuenta segura y protegida</li>
+      </ul>
+    </div>
+
+    <p class="login-footer">
+      ¿No tienes cuenta? <a href="registro.html">Créate una aquí</a>
+    </p>
+  </section>
+
+  <footer>© 2025 Design Reyes — Todos los derechos reservados.</footer>
+
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+      authDomain: "design-reyes.firebaseapp.com",
+      projectId: "design-reyes",
+      storageBucket: "design-reyes.appspot.com",
+      messagingSenderId: "454744557781",
+      appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+      measurementId: "G-KCEX0JCC76"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const ADMIN_EMAIL = "hauxwellapaguenoalberson@gmail.com";
+    let googleInProgress = false;
+
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(err => {
+      console.warn('No se pudo establecer la persistencia:', err);
+    });
+
+    // 🔹 Redirección segura
+    function safeRedirect(routePath, fallbackFile) {
+      fetch(routePath, { method: 'HEAD' })
+        .then(res => {
+          if (res && res.ok) window.location.href = routePath;
+          else window.location.href = fallbackFile;
+        })
+        .catch(() => (window.location.href = fallbackFile));
+    }
+
+    // 🔹 Control centralizado de sesión
+    auth.onAuthStateChanged(async (user) => {
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (!logoutBtn) return;
+
+      if (user) {
+        // Mostrar botón de logout
+        logoutBtn.style.display = "block";
+
+        const email = (user.email || '').toLowerCase();
+
+        // Redirección según tipo de usuario
+        if (email === ADMIN_EMAIL) {
+          if (!window.location.pathname.includes('/admin') && !window.location.href.includes('admin.html')) {
+            safeRedirect('/admin', 'admin.html');
+          }
+        } else {
+          if (!window.location.pathname.includes('/dashboard') && !window.location.href.includes('dashboard.html')) {
+            safeRedirect('/dashboard', 'dashboard.html');
+          }
+        }
+      } else {
+        // Ocultar botón logout si no hay sesión
+        logoutBtn.style.display = "none";
+
+        // Evita recursión infinita en login.html
+        if (!window.location.pathname.includes('login')) {
+          safeRedirect('/login', 'login.html');
+        }
+      }
+    });
+
+    // 🔹 Iniciar sesión con Google
+    document.getElementById("googleSignIn").addEventListener("click", async () => {
+      if (googleInProgress) return;
+      googleInProgress = true;
+
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+      try {
+        Swal.fire({
+          title: 'Iniciando sesión...',
+          text: 'Conectando con Google',
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          willOpen: () => Swal.showLoading(),
+        });
+
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+
+        await db.collection("users").doc(user.uid).set({
+          name: user.displayName || "",
+          email: user.email,
+          membership: "free",
+          role: "user",
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        Swal.fire({
+          icon: 'success',
+          title: '¡Bienvenido!',
+          text: `Hola ${user.displayName}. Redirigiendo...`,
+          timer: 1500,
+          showConfirmButton: false
+        });
+
+        // La redirección ya la maneja onAuthStateChanged
+      } catch (err) {
+        console.error('Error en login:', err);
+        let msg = "Error al iniciar sesión. Inténtalo nuevamente.";
+
+        if (err.code === 'auth/popup-closed-by-user') msg = "Inicio de sesión cancelado.";
+        else if (err.code === 'auth/popup-blocked') msg = "Popup bloqueado. Permite popups para este sitio.";
+
+        Swal.fire({ icon: 'error', title: 'Error', text: msg, confirmButtonColor: '#9c6bff' });
+      } finally {
+        googleInProgress = false;
+      }
+    });
+
+    // 🔹 Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await auth.signOut();
+        localStorage.clear();
+        Swal.fire({
+          icon: 'success',
+          title: 'Sesión cerrada',
+          text: 'Has cerrado sesión correctamente.',
+          timer: 1200,
+          showConfirmButton: false
+        });
+        setTimeout(() => safeRedirect('/login', 'login.html'), 1300);
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al cerrar sesión',
+          text: err.message || 'Intenta de nuevo.'
+        });
+      }
+    });
+
+    // 🔹 Enlaces del header
+    function tryNavigate(routePath, filePath, event) {
+      event?.preventDefault();
+      fetch(routePath, { method: 'HEAD' })
+        .then(res => window.location.href = res.ok ? routePath : filePath)
+        .catch(() => window.location.href = filePath);
+    }
+
+    document.getElementById('lnkHome')?.addEventListener('click', e => tryNavigate('/', 'Index.html', e));
+    document.getElementById('lnkRegister')?.addEventListener('click', e => tryNavigate('/register', 'registro.html', e));
+  </script>
+</body>
+</html>

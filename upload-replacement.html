@@ -1,0 +1,55 @@
+            <div class="form-group">
+              <label class="upload-label">
+                📸 Imagen de Preview
+              </label>
+              <div class="upload-area" id="fileUploadArea">
+                <div class="upload-content" id="imageInitialContent">
+                  <div class="upload-icon">🖼️</div>
+                  <div class="upload-text">Arrastra tu imagen aquí</div>
+                  <div class="upload-hint">PNG, JPG, WEBP - Máximo 5MB</div>
+                  <button type="button" class="upload-button" onclick="document.getElementById('designImage').click()">
+                    Seleccionar archivo
+                  </button>
+                </div>
+                
+                <div class="preview-container" id="imagePreview" style="display: none;">
+                  <div class="image-preview">
+                    <img id="previewImg" src="" alt="Preview">
+                    <div class="preview-overlay">Cambiar imagen</div>
+                  </div>
+                  <div class="file-name" id="imageFileName"></div>
+                </div>
+                
+                <input type="file" id="designImage" class="file-input" accept="image/*" required>
+              </div>
+              <div class="progress-bar" id="uploadProgress">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="upload-label">
+                📦 Archivo de Diseño
+              </label>
+              <div class="upload-area" id="fileUploadAreaDesign">
+                <div class="upload-content" id="fileInitialContent">
+                  <div class="upload-icon">📁</div>
+                  <div class="upload-text">Arrastra tu archivo aquí</div>
+                  <div class="upload-hint">ZIP, PSD, AI, PDF, etc. - Máximo 50MB</div>
+                  <button type="button" class="upload-button" onclick="document.getElementById('designFile').click()">
+                    Seleccionar archivo
+                  </button>
+                </div>
+                
+                <div class="file-success" id="fileSuccess" style="display: none;">
+                  <div class="success-icon">📦</div>
+                  <div class="success-text">Archivo subido correctamente</div>
+                  <div class="file-name" id="fileFileName"></div>
+                </div>
+                
+                <input type="file" id="designFile" class="file-input" accept=".zip,.rar,.psd,.ai,.pdf,.svg,.eps,.png,.jpg,.jpeg" required>
+              </div>
+              <div class="progress-bar" id="uploadProgressDesign">
+                <div class="progress-fill" id="progressFillDesign"></div>
+              </div>
+            </div>

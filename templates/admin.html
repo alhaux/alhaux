@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon ultra pequeño para evitar “logo gigante” en la pestaña -->
+  <link rel="icon"
+        href="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+
+  <title>Panel de Administración | Design Reyes</title>
+
+  <!-- Fuentes / estilos globales -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../CSS/admin-styles.css">
+  <link rel="stylesheet" href="../CSS/upload-styles.css">
+
+  <!-- SweetAlert -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main:#050006;
+      --sidebar-bg:rgba(8,8,20,0.98);
+      --card-bg:rgba(18,18,30,0.95);
+      --accent:#9c6bff;
+      --text-main:#ffffff;
+      --text-dim:#b8a9d9;
+      --border:rgba(156,107,255,0.28);
+      --shadow:0 0 35px rgba(0,0,0,0.65);
+      --radius:14px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins",sans-serif;}
+
+    body{
+      min-height:100vh;
+      display:flex;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(130,0,255,.18) 0%, transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(0,120,255,.16) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(180,0,255,.18) 0%, transparent 55%),
+        var(--bg-main);
+      color:var(--text-main);
+    }
+
+    /* SIDEBAR ------------------------------------------------------------ */
+    .sidebar{
+      width:260px;
+      background:var(--sidebar-bg);
+      border-right:1px solid var(--border);
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      box-shadow:var(--shadow);
+      position:sticky;
+      top:0;
+      height:100vh;
+      z-index:10;
+    }
+    .sidebar .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:25px;
+      filter:drop-shadow(0 0 10px rgba(156,107,255,.7));
+    }
+    .sidebar .logo img{
+      width:40px;
+      height:auto;
+      display:block;
+      backface-visibility:hidden;
+    }
+    .sidebar .logo span{
+      font-weight:600;
+      font-size:1.1rem;
+    }
+    .sidebar h2{
+      font-size:1.05rem;
+      color:var(--accent);
+      margin-bottom:6px;
+      border-bottom:1px solid var(--border);
+      padding-bottom:6px;
+    }
+    .nav-link{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:10px;
+      color:var(--text-dim);
+      text-decoration:none;
+      font-size:.92rem;
+      transition:.2s;
+      cursor:pointer;
+    }
+    .nav-link:hover{
+      color:var(--text-main);
+      background:rgba(156,107,255,.14);
+      transform:translateX(4px);
+    }
+    .nav-link.active{
+      background:linear-gradient(90deg,#6236ff,#b336ff);
+      color:#fff;
+      box-shadow:0 0 18px rgba(156,107,255,.5);
+    }
+
+    /* MAIN --------------------------------------------------------------- */
+    .main{
+      flex:1;
+      padding:24px 28px;
+      overflow-y:auto;
+    }
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:26px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:linear-gradient(135deg,rgba(156,107,255,.16),rgba(10,10,25,.92));
+      padding:14px 18px;
+      box-shadow:var(--shadow);
+    }
+    .header h1{
+      font-size:1.7rem;
+      color:var(--accent);
+    }
+    .btn-outline{
+      padding:8px 12px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:transparent;
+      color:var(--text-main);
+      cursor:pointer;
+      font-size:.9rem;
+      transition:.2s;
+    }
+    .btn-outline:hover{
+      background:rgba(156,107,255,.15);
+    }
+    .section{
+      margin-top:18px;
+    }
+    .section h2{
+      font-size:1.4rem;
+      color:var(--accent);
+      margin-bottom:14px;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:16px;
+      margin-bottom:24px;
+    }
+    .stat-card{
+      background:var(--card-bg);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px 16px;
+      box-shadow:var(--shadow);
+    }
+    .stat-card h3{
+      font-size:.9rem;
+      color:var(--text-dim);
+      margin-bottom:4px;
+    }
+    .stat-card span{
+      font-size:1.4rem;
+      font-weight:600;
+    }
+
+    .card{
+      background:var(--card-bg);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      padding:18px 16px;
+      margin-top:18px;
+      box-shadow:var(--shadow);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:.9rem;
+    }
+    th,td{
+      padding:8px 6px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      text-align:left;
+      color:var(--text-dim);
+    }
+    th{
+      color:var(--accent);
+      font-weight:500;
+    }
+    .btn-small{
+      padding:5px 9px;
+      border-radius:6px;
+      border:none;
+      font-size:.8rem;
+      cursor:pointer;
+      background:rgba(156,107,255,.16);
+      color:var(--text-main);
+    }
+
+    /* SUBIR DISEÑO ------------------------------------------------------- */
+    .upload-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      gap:18px;
+      margin-top:10px;
+    }
+    .form-group{
+      margin-bottom:12px;
+    }
+    .form-group label{
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      color:var(--text-dim);
+      margin-bottom:4px;
+      display:block;
+    }
+    .form-input, textarea, select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:rgba(5,5,20,.9);
+      color:var(--text-main);
+      font-size:.9rem;
+      outline:none;
+      resize:vertical;
+    }
+    .form-input:focus, textarea:focus, select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 2px rgba(156,107,255,.25);
+    }
+    .upload-area{
+      border:2px dashed var(--border);
+      border-radius:12px;
+      padding:18px;
+      text-align:center;
+      background:rgba(20,20,40,.9);
+      cursor:pointer;
+      transition:.2s;
+    }
+    .upload-area:hover{
+      border-color:var(--accent);
+      background:rgba(40,20,80,.85);
+    }
+    .upload-area.dragover{
+      border-color:#00ff9f;
+      box-shadow:0 0 18px rgba(0,255,159,.6);
+    }
+    .upload-area input[type=file]{
+      display:none;
+    }
+    .btn-primary{
+      background:linear-gradient(90deg,#6236ff,#b336ff);
+      border:none;
+      color:#fff;
+      width:100%;
+      padding:11px 16px;
+      border-radius:8px;
+      font-size:.95rem;
+      font-weight:500;
+      cursor:pointer;
+      margin-top:10px;
+      box-shadow:0 0 20px rgba(156,107,255,.45);
+      transition:.2s;
+    }
+    .btn-primary:hover{
+      transform:translateY(-2px);
+    }
+    .preview-box{
+      border-radius:10px;
+      border:1px dashed var(--border);
+      padding:14px;
+      text-align:center;
+      min-height:150px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:10px;
+    }
+    .preview-box .preview-image-frame{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      width:100%;
+    }
+    .preview-box .preview-image-container{
+      width:100%;
+      max-width:320px;
+      height:220px;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.04);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px;
+    }
+    .preview-box .preview-image{
+      max-width:100%;
+      max-height:100%;
+      object-fit:contain;
+      border-radius:6px;
+      box-shadow:none;
+      background:transparent;
+      display:block;
+    }
+    .preview-box .preview-filename{
+      font-size:0.85rem;
+      color:var(--text-dim);
+      max-width:320px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    @media(max-width:900px){
+      .sidebar{display:none;}
+      .main{padding:18px;}
+      body{display:block;}
+    }
+  </style>
+  <style>
+    /* Modern upload-area and preview styles appended (no global overrides) */
+    .file-upload-area:hover { border-color: var(--accent); background: rgba(98, 54, 255, 0.1); transform: translateY(-2px); }
+    .file-upload-area.dragover { border-color: #28a745; background: rgba(40, 167, 69, 0.1); transform: scale(1.02); }
+    .file-upload-area input[type="file"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+    .upload-icon { font-size: 2rem; margin-bottom: 8px; color: var(--accent); }
+    .upload-text { font-size: 1rem; font-weight: 600; color: var(--text-main); margin-bottom: 5px; }
+    .upload-hint { font-size: 0.85rem; color: var(--text-dim); line-height: 1.3; }
+
+    .modern-upload-area { border: 2px dashed rgba(98, 54, 255, 0.3); border-radius: 16px; padding: 20px; text-align: center; background: linear-gradient(135deg, rgba(98, 54, 255, 0.05), rgba(168, 85, 247, 0.05)); backdrop-filter: blur(10px); cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
+    .modern-upload-area::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(98, 54, 255, 0.1), transparent); transform: translateX(-100%); transition: transform 0.6s; }
+    .modern-upload-area:hover { border-color: var(--accent); background: linear-gradient(135deg, rgba(98, 54, 255, 0.1), rgba(168, 85, 247, 0.1)); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(98, 54, 255, 0.3); }
+    .modern-upload-area:hover::before { transform: translateX(100%); }
+    .modern-upload-area.dragover { border-color: #00ff9f; background: linear-gradient(135deg, rgba(0, 255, 159, 0.1), rgba(98, 54, 255, 0.1)); transform: scale(1.02); box-shadow: 0 0 30px rgba(0, 255, 159, 0.4); animation: pulse-neon 1.5s infinite; }
+    @keyframes pulse-neon { 0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 159, 0.4); } 50% { box-shadow: 0 0 40px rgba(0, 255, 159, 0.6); } }
+    .modern-upload-area input[type="file"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; }
+
+    .upload-initial { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; transition: all 0.3s ease; }
+    .upload-initial .upload-icon { font-size: 2.5rem; margin-bottom: 12px; color: var(--accent); filter: drop-shadow(0 0 8px rgba(98, 54, 255, 0.3)); }
+    .upload-initial .upload-text { font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+    .upload-initial .upload-hint { font-size: 0.9rem; color: var(--text-dim); line-height: 1.4; }
+
+    .upload-preview { display: flex; flex-direction: column; align-items: center; width: 100%; animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes fadeInScale { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+    .preview-image-container { position: relative; width: 120px; height: 120px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 2px solid rgba(98, 54, 255, 0.3); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
+    .preview-image-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+    .preview-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); color: white; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(2px); }
+    .preview-image-container:hover .preview-overlay { opacity: 1; }
+    .preview-image-container:hover img { transform: scale(1.1); }
+    .change-text { font-size: 0.85rem; font-weight: 600; text-align: center; }
+    .preview-filename { font-size: 0.9rem; color: var(--text-main); font-weight: 500; text-align: center; max-width: 200px; word-break: break-word; }
+
+    .upload-success { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; animation: successPulse 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes successPulse { 0% { opacity: 0; transform: scale(0.8); } 50% { transform: scale(1.05); } 100% { opacity: 1; transform: scale(1); } }
+    .success-icon { font-size: 3rem; margin-bottom: 15px; color: #00ff9f; filter: drop-shadow(0 0 12px rgba(0, 255, 159, 0.5)); animation: bounce 2s infinite; }
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px); } 60% { transform: translateY(-4px); } }
+    .success-text { font-size: 1.1rem; font-weight: 600; color: #00ff9f; margin-bottom: 8px; text-shadow: 0 0 8px rgba(0, 255, 159, 0.3); }
+    .success-filename { font-size: 0.95rem; color: var(--text-main); font-weight: 500; margin-bottom: 6px; max-width: 250px; word-break: break-word; text-align: center; }
+    .success-hint { font-size: 0.8rem; color: var(--text-dim); font-style: italic; }
+
+    .progress-bar { width: 100%; height: 12px; background: rgba(255,255,255,0.08); border-radius: 6px; margin-top: 15px; overflow: hidden; display: none; position:relative; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #6236ff, #b336ff); width: 0%; transition: width 0.3s ease, box-shadow 0.25s ease; }
+    .progress-bar.success { background: rgba(0,255,159,0.12); }
+    .progress-fill.success { background: linear-gradient(90deg,#00ff9f,#00cc88); box-shadow:0 4px 22px rgba(0,204,136,0.18); }
+    @keyframes pulse-success { 0%{ transform:scale(1);} 50%{ transform:scale(1.02);} 100%{ transform:scale(1);} }
+    .progress-fill.success.pulse { animation: pulse-success 900ms ease-in-out 2; }
+    .progress-bar .progress-text{ position: absolute; left:0;right:0;top:0;bottom:0; display:flex; align-items:center; justify-content:center; font-weight:800; color:rgba(255,255,255,0.98); font-size:1.05rem; letter-spacing:0.6px; pointer-events:none; text-shadow:0 1px 0 rgba(0,0,0,0.6); }
+    #uploadProgressBig{ display:block; text-align:center; font-weight:800; font-size:1.35rem; color:var(--accent); margin-top:6px; }
+    #uploadProgressBig.success{ color:#00ff9f; text-shadow:0 4px 18px rgba(0,255,159,0.08); }
+    #uploadStatus{ display:block; text-align:center; font-size:0.95rem; color:var(--text-dim); margin-top:6px; }
+
+    /* Admin management helper styles */
+    .admin-management-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    .admin-cards-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+    .admin-card { background: linear-gradient(145deg, #ffffff, #f8f9fa); border-radius: 16px; padding: 24px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .role-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .role-owner { background: linear-gradient(135deg, #ffd700, #ffed4a); color: #8b6914; }
+    .role-super_admin { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+    .role-admin { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR ------------------------------------------------------------>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="../img/LOGO DR SOLO BLANCO.png" alt="Design Reyes" loading="eager" decoding="sync">
+      <span>Design Reyes</span>
+    </div>
+
+    <h2>Admin Panel</h2>
+    <a class="nav-link active" data-section="dashboard">📊 Dashboard</a>
+    <a class="nav-link" data-section="subir">⬆️ Subir diseño</a>
+    <a class="nav-link" data-section="usuarios">👥 Usuarios</a>
+    <a class="nav-link" data-section="membresias">💎 Membresías</a>
+    <a class="nav-link" data-section="ingresos">💼 Ingresos / Diseños</a>
+    <a class="nav-link" data-section="administradores">👑 Administradores</a>
+    <a class="nav-link" data-section="quickqueries">📬 Consultas</a>
+    <a class="nav-link" id="btnHome">🏠 Ir al inicio</a>
+    <a class="nav-link" id="btnLogout">🚪 Cerrar sesión</a>
+  </aside>
+
+  <!-- MAIN --------------------------------------------------------------->
+  <div class="main">
+
+    <header class="header">
+      <h1>Panel de Administración</h1>
+      <div>
+        <button class="btn-outline" onclick="loadDashboard()">🔄 Refrescar datos</button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD ------------------------------------------------------- -->
+    <section id="section-dashboard" class="section">
+      <h2>Resumen</h2>
+
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Usuarios registrados</h3>
+          <span id="countUsers">0</span>
+        </div>
+        <div class="stat-card">
+          <h3>Diseños subidos</h3>
+          <span id="countDesigns">0</span>
+        </div>
+        <div class="stat-card">
+          <h3>Usuarios VIP</h3>
+          <span id="countVIPs">0</span>
+        </div>
+        <div class="stat-card">
+          <h3>Ingresos totales</h3>
+          <span id="countRevenue">S/ 0</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Últimos diseños subidos</h3>
+        <table id="tblLastDesigns">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Tipo</th>
+              <th>Precio</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SUBIR DISEÑO ---------------------------------------------------- -->
+    <section id="section-subir" class="section" style="display:none;">
+      <h2>Subir nuevo diseño</h2>
+
+      <div class="upload-grid">
+
+        <!-- FORM -->
+        <div class="card">
+          <form id="formUploadDesign">
+            <div class="form-group">
+              <label for="designName">Nombre del diseño</label>
+              <input type="text" id="designName" class="form-input" placeholder="Ej: Camiseta Barcelona 2024" required>
+            </div>
+
+            <div class="form-group">
+              <label for="designDesc">Descripción</label>
+              <textarea id="designDesc" rows="3" placeholder="Describe brevemente el diseño..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="designCategory">Categoría</label>
+              <select id="designCategory" required>
+                <option value="">Selecciona categoría</option>
+                <option value="SIN CATEGORIA">📂 SIN CATEGORÍA</option>
+                <option value="INTERCLASES">⚽ INTERCLASES</option>
+                <option value="FUTSALEROS">🏆 FUTSALEROS</option>
+                <option value="EQUIPOS OFICIALES">👕 EQUIPOS OFICIALES</option>
+                <option value="INTERNACIONALES">🌍 INTERNACIONALES</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="designType">Tipo</label>
+              <select id="designType" required>
+                <option value="gratis">🆓 Gratis</option>
+                <option value="premium">💎 Premium</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="priceGroup" style="display:none;">
+              <label for="designPrice">Precio (S/)</label>
+              <input type="number" id="designPrice" class="form-input" min="0" step="0.10" placeholder="15.90">
+            </div>
+
+            <div class="form-group">
+              <label for="designFormats">Formatos (separados por coma)</label>
+              <input type="text" id="designFormats" class="form-input" placeholder="CDR, PSD, PDF...">
+            </div>
+
+            <div class="form-group">
+              <label>Imagen de preview (SUBIDA DESHABILITADA)</label>
+              <p style="color:var(--text-dim);margin-top:6px;margin-bottom:6px;">La subida de imagen desde el navegador está deshabilitada en el modo de pruebas locales. Usa el campo "URL de preview" para proporcionar la imagen.</p>
+              <input type="file" id="designImage" accept="image/*" disabled style="display:none;" aria-hidden="true">
+            </div>
+
+            <div class="form-group">
+              <label for="previewUrl">(Opcional) O pega una URL de imagen</label>
+              <input type="url" id="previewUrl" class="form-input" placeholder="https://... (alternativa: pega URL en lugar de subir archivo)">
+              <small style="color:var(--text-dim);">Si prefieres usar una URL en lugar de subir un archivo, pégala aquí.</small>
+            </div>
+
+            <!-- Input de archivo eliminado: ahora se requiere enlace de Google Drive en el campo siguiente -->
+
+            <div class="form-group" style="display:flex;gap:8px;align-items:flex-start;">
+              <div style="flex:1;">
+                <label for="driveUrl">(Requerido) Enlace de Google Drive (archivo descargable)</label>
+                <input type="url" id="driveUrl" class="form-input" placeholder="https://drive.google.com/..." required>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <button type="button" id="btnVerifyDrive" class="btn-outline" title="Abrir vista del enlace en nueva pestaña">Verificar</button>
+                <button type="button" id="btnUseDriveThumb" class="btn-outline" title="Usar miniatura de Drive como preview">Usar miniatura</button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="btnUploadDesign">
+              Subir diseño
+            </button>
+            <button type="button" id="btnCancelUpload" class="btn-outline" style="margin-left:10px;display:none;">Cancelar</button>
+          </form>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="card">
+          <h3 style="margin-bottom:10px;">Vista previa</h3>
+          <div class="preview-box" id="previewBox">
+            <div style="font-size:2.3rem;">🖼️</div>
+            <p style="color:var(--text-dim);font-size:.9rem;">Selecciona una imagen para ver la vista previa.</p>
+          </div>
+          <div style="height:10px;margin-top:8px;">
+            <div class="progress-bar" id="uploadProgress" style="display:none; position:relative;">
+              <div class="progress-fill" id="uploadProgressFill" style="width:0%"></div>
+              <div class="progress-text" id="uploadProgressText">0%</div>
+            </div>
+            <div id="uploadProgressBig" aria-live="polite">0%</div>
+            <div id="uploadStatus" aria-live="polite">Esperando acción...</div>
+            <div id="uploadActions" style="display:none;margin-top:8px;text-align:center;"></div>
+          </div>
+
+          <div style="margin-top:14px;font-size:.85rem;color:var(--text-dim);">
+            <div><strong>Nombre:</strong> <span id="pvName">-</span></div>
+            <div><strong>Categoría:</strong> <span id="pvCategory">-</span></div>
+            <div><strong>Tipo:</strong> <span id="pvType">-</span></div>
+            <div><strong>Precio:</strong> <span id="pvPrice">-</span></div>
+            <div><strong>Formatos:</strong> <span id="pvFormats">-</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- USUARIOS -------------------------------------------------------- -->
+    <section id="section-usuarios" class="section" style="display:none;">
+      <h2>Usuarios registrados</h2>
+      <div class="card">
+        <button class="btn-outline" onclick="loadUsers()">🔄 Actualizar</button>
+        <span id="usersInfo" style="margin-left:10px;font-size:.85rem;color:var(--text-dim);">Cargando...</span>
+
+        <table id="tblUsers">
+          <thead>
+          <tr>
+            <th>Email</th>
+            <th>Membresía</th>
+            <th>Estado</th>
+            <th>Rol</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr><td colspan="4" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MEMBRESÍAS ------------------------------------------------------ -->
+    <section id="section-membresias" class="section" style="display:none;">
+      <h2>Membresías</h2>
+      <div class="stats">
+        <div class="stat-card"><h3>FREE</h3><span id="mFree">0</span></div>
+        <div class="stat-card"><h3>BASIC</h3><span id="mBasic">0</span></div>
+        <div class="stat-card"><h3>PREMIUM</h3><span id="mPremium">0</span></div>
+        <div class="stat-card"><h3>ELITE</h3><span id="mElite">0</span></div>
+      </div>
+      <div class="card">
+        <p style="color:var(--text-dim);font-size:.9rem;">
+          Los contadores se calculan a partir del campo <code>membership</code> en cada documento de <code>users</code>.
+        </p>
+        <button class="btn-outline" onclick="loadMembershipStats()">🔄 Recalcular</button>
+      </div>
+    </section>
+
+    <!-- INGRESOS / DISEÑOS ---------------------------------------------- -->
+    <section id="section-ingresos" class="section" style="display:none;">
+      <h2>Gestión de diseños</h2>
+      <div class="card">
+        <button class="btn-outline" onclick="loadDesigns()">🔄 Actualizar</button>
+        <table id="tblDesigns">
+          <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Tipo</th>
+            <th>Precio</th>
+            <th>Subido por</th>
+            <th>Acción</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr><td colspan="6" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ADMINISTRADORES ------------------------------------------------- -->
+    <section id="section-administradores" class="section" style="display:none;">
+      <h2>Administradores</h2>
+
+      <div class="card">
+        <h3>Promover usuario a admin</h3>
+        <div class="form-group">
+          <label for="newAdminEmail">Correo del usuario</label>
+          <input type="email" id="newAdminEmail" class="form-input" placeholder="usuario@ejemplo.com">
+        </div>
+        <div class="form-group">
+          <label for="newAdminRole">Rol</label>
+          <select id="newAdminRole">
+            <option value="admin">Admin</option>
+            <option value="super_admin">Super Admin</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="promoteAdmin()">Promover</button>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3>Lista de administradores</h3>
+        <table id="tblAdmins">
+          <thead>
+          <tr>
+            <th>Email</th>
+            <th>Rol</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr><td colspan="2" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CONSULTAS RÁPIDAS ------------------------------------------------ -->
+    <section id="section-quickqueries" class="section" style="display:none;">
+      <h2>Consultas rápidas</h2>
+      <div class="card">
+        <button class="btn-outline" onclick="loadQuickQueries()">🔄 Actualizar</button>
+        <p style="color:var(--text-dim);margin-top:8px;">Listado de consultas recibidas desde la página principal (colección <code>quickQueries</code>).</p>
+
+        <table id="tblQuickQueries">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Mensaje</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="6" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- SCRIPTS FIREBASE COMPAT ------------------------------------------->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    // ---------- CONFIG FIREBASE ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+      authDomain: "design-reyes.firebaseapp.com",
+      projectId: "design-reyes",
+      storageBucket: "design-reyes.appspot.com",
+      messagingSenderId: "454744557781",
+      appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+      measurementId: "G-KCEX0JCC76"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth    = firebase.auth();
+    const db      = firebase.firestore();
+    const storage = firebase.storage();
+
+    // Variable para controlar la tarea de subida actual (permitir cancelación)
+    let currentUploadTask = null;
+    const btnCancelUploadEl = document.getElementById('btnCancelUpload');
+    if (btnCancelUploadEl){
+      btnCancelUploadEl.addEventListener('click', ()=>{
+        // intentar cancelar tarea compat
+        if (currentUploadTask && typeof currentUploadTask.cancel === 'function'){
+          try{ currentUploadTask.cancel(); }catch(e){ console.warn('Cancel compat error', e); }
+        }
+        // intentar cancelar tarea modular si existe
+        try{
+          if (window.currentModularUploadTask && typeof window.currentModularUploadTask.cancel === 'function'){
+            try{ window.currentModularUploadTask.cancel(); }catch(e){ console.warn('Cancel modular error', e); }
+          }
+        }catch(e){ /* noop */ }
+
+        const progressBar = document.getElementById('uploadProgress');
+        const progressFill = document.getElementById('uploadProgressFill');
+        const progressText = document.getElementById('uploadProgressText');
+        if (progressBar) progressBar.style.display = 'none';
+        if (progressFill) progressFill.style.width = '0%';
+        if (progressText) progressText.textContent = 'Cancelado';
+        document.getElementById('btnUploadDesign').disabled = false;
+        document.getElementById('btnUploadDesign').textContent = 'Subir diseño';
+        btnCancelUploadEl.style.display = 'none';
+        const actions = document.getElementById('uploadActions'); if(actions) actions.style.display='none';
+      });
+    }
+
+    const ADMIN_EMAIL = "hauxwellapaguenoalberson@gmail.com";
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(console.warn);
+
+    // ---------- NAV SECCIONES ----------
+    const sections = ["dashboard","subir","usuarios","membresias","ingresos","administradores","quickqueries"];
+    document.querySelectorAll(".nav-link[data-section]").forEach(link => {
+      link.addEventListener("click", () => {
+        const sec = link.dataset.section;
+        sections.forEach(s => {
+          document.getElementById("section-"+s).style.display = (s===sec) ? "block":"none";
+        });
+        document.querySelectorAll(".nav-link[data-section]").forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+
+        if (sec === "dashboard")      loadDashboard();
+        if (sec === "usuarios")       loadUsers();
+        if (sec === "membresias")     loadMembershipStats();
+        if (sec === "ingresos")       loadDesigns();
+        if (sec === "administradores")loadAdmins();
+      });
+    });
+
+    // Ir al inicio (Index)
+    document.getElementById("btnHome").onclick = (e)=>{
+      e.preventDefault();
+      window.location.href = "Index.html";
+    };
+
+    // Logout
+    document.getElementById("btnLogout").onclick = async (e)=>{
+      e.preventDefault();
+      await auth.signOut();
+      window.location.href = "login.html";
+    };
+
+    // ---------- PROTECCIÓN DE RUTA ----------
+    auth.onAuthStateChanged(async user => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const docRef = db.collection("users").doc(user.uid);
+        const snap = await docRef.get();
+        let role = null;
+
+        if (snap.exists) role = snap.data().role || null;
+        const emailLower = (user.email || "").toLowerCase();
+
+        const isRootAdmin = emailLower === ADMIN_EMAIL.toLowerCase();
+        const allowedRoles = ["admin","super_admin","owner"];
+
+        if (!isRootAdmin && (!role || !allowedRoles.includes(role))) {
+          Swal.fire({icon:"error",title:"Acceso denegado",text:"No tienes permisos de administrador."})
+            .then(()=>{ window.location.href = "login.html"; });
+          return;
+        }
+
+        loadDashboard();
+        try {
+          if (typeof syncLocalQuickQueries === 'function') {
+            syncLocalQuickQueries();
+          }
+        } catch(e){ console.warn('No se pudo lanzar syncLocalQuickQueries:', e); }
+      } catch (err) {
+        console.error(err);
+        window.location.href = "login.html";
+      }
+    });
+
+    window.addEventListener('online', () => {
+      try { if (typeof syncLocalQuickQueries === 'function') syncLocalQuickQueries(); } catch(e){}
+    });
+
+    // ---------- DASHBOARD ----------
+    async function loadDashboard(){
+      try{
+        const usersSnap = await db.collection("users").get();
+        const usersTotal = usersSnap.size;
+        document.getElementById("countUsers").textContent = usersTotal;
+
+        let vip = 0;
+        let mFree=0,mBasic=0,mPremium=0,mElite=0;
+        usersSnap.forEach(doc=>{
+          const u = doc.data();
+          const m = (u.membership || "free").toLowerCase();
+          if (m === "basic")      { vip++; mBasic++; }
+          else if (m === "premium"){ vip++; mPremium++; }
+          else if (m === "elite")  { vip++; mElite++; }
+          else mFree++;
+        });
+
+        document.getElementById("countVIPs").textContent = vip;
+        document.getElementById("mFree").textContent    = mFree;
+        document.getElementById("mBasic").textContent   = mBasic;
+        document.getElementById("mPremium").textContent = mPremium;
+        document.getElementById("mElite").textContent   = mElite;
+
+        const designsSnap = await db.collection("designs").orderBy("createdAt","desc").limit(8).get();
+        document.getElementById("countDesigns").textContent = designsSnap.size;
+
+        const tbody = document.querySelector("#tblLastDesigns tbody");
+        tbody.innerHTML = "";
+        designsSnap.forEach(doc=>{
+          const d = doc.data();
+          const tr = document.createElement("tr");
+          const typeTxt = (d.type==="premium") ? "💎 Premium" : "🆓 Gratis";
+          const price   = (d.type==="premium") ? `S/ ${d.price || 0}` : "Gratis";
+          const dateStr = d.createdAt ? d.createdAt.toDate().toLocaleDateString("es-PE") : "-";
+          tr.innerHTML = `
+             <td>${d.name || "-"}</td>
+             <td>${d.category || "-"}</td>
+             <td>${typeTxt}</td>
+             <td>${price}</td>
+             <td>${dateStr}</td>`;
+          tbody.appendChild(tr);
+        });
+
+        let revenue = 0;
+        usersSnap.forEach(doc=>{
+          const u = doc.data();
+          if ((u.membershipStatus || "inactive") !== "active") return;
+          switch((u.membership || "free").toLowerCase()){
+            case "basic":   revenue += 35; break;
+            case "premium": revenue += 50; break;
+            case "elite":   revenue += 200; break;
+          }
+        });
+
+        const purchasesSnap = await db.collection("purchases").get().catch(()=>null);
+        if (purchasesSnap && !purchasesSnap.empty){
+          purchasesSnap.forEach(doc=>{
+            revenue += Number(doc.data().amount || 0);
+          });
+        }
+
+        document.getElementById("countRevenue").textContent = "S/ " + revenue.toFixed(2);
+      }catch(e){
+        console.error(e);
+      }
+    }
+
+    // ---------- USUARIOS ----------
+    async function loadUsers(){
+      const tbody = document.querySelector("#tblUsers tbody");
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>`;
+
+      const snap = await db.collection("users").orderBy("email").get();
+      tbody.innerHTML = "";
+      snap.forEach(doc=>{
+        const u = doc.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${u.email || "-"}</td>
+          <td>${(u.membership || "free").toUpperCase()}</td>
+          <td>${u.membershipStatus || "inactive"}</td>
+          <td>${u.role || "-"}</td>`;
+        tbody.appendChild(tr);
+      });
+      document.getElementById("usersInfo").textContent = `Total: ${snap.size}`;
+    }
+
+    // ---------- QUICK QUERIES ----------
+    async function syncLocalQuickQueries() {
+      try {
+        const raw = localStorage.getItem('quickQueriesLocal');
+        if (!raw) return;
+        const arr = JSON.parse(raw || '[]');
+        if (!Array.isArray(arr) || arr.length === 0) return;
+
+        console.log('🔁 Sincronizando', arr.length, 'consultas locales a Firestore...');
+
+        for (const q of arr) {
+          try {
+            await db.collection('quickQueries').add({
+              name: q.name || '-',
+              email: q.email || '-',
+              message: q.message || '-',
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              source: 'local-sync',
+            });
+          } catch (e) {
+            console.warn('No se pudo subir una consulta local, se reintentará luego:', e);
+          }
+        }
+
+        localStorage.removeItem('quickQueriesLocal');
+        console.log('✅ Sincronización de consultas locales completada');
+      } catch (err) {
+        console.error('Error en syncLocalQuickQueries:', err);
+      }
+    }
+
+    async function loadQuickQueries(){
+      const tbody = document.querySelector('#tblQuickQueries tbody');
+      if (!tbody) return;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>`;
+
+      try{
+        const snap = await db.collection('quickQueries').orderBy('createdAt','desc').limit(500).get();
+        if (snap.empty) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-dim);">No hay consultas</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        snap.forEach(doc=>{
+          const d = doc.data();
+          const id = doc.id;
+          const dateStr = d.createdAt ? (d.createdAt.toDate ? d.createdAt.toDate().toLocaleString('es-PE') : new Date(d.createdAt).toLocaleString('es-PE')) : '-';
+          const status = d.handled ? `✅ ${d.handledBy||''}` : 'Pendiente';
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${escapeHtml(d.name || '-')}</td>
+            <td>${escapeHtml(d.email || '-')}</td>
+            <td style="max-width:360px; white-space:pre-wrap;">${escapeHtml(d.message || '-')}</td>
+            <td>${dateStr}</td>
+            <td>${status}</td>
+            <td>
+              <button class="btn-small" onclick="markQueryHandled('${id}')">Marcar</button>
+              <button class="btn-small" style="margin-left:6px;" onclick="deleteQuery('${id}')">Eliminar</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }catch(e){
+        console.error('Error cargando quickQueries:', e);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-dim);">Error cargando consultas</td></tr>`;
+      }
+    }
+
+    async function markQueryHandled(id){
+      try{
+        const user = auth.currentUser;
+        await db.collection('quickQueries').doc(id).update({
+          handled: true,
+          handledAt: firebase.firestore.FieldValue.serverTimestamp(),
+          handledBy: user ? user.email : 'admin'
+        });
+        Swal.fire({icon:'success', title:'Actualizado', text:'La consulta fue marcada como manejada.'});
+        loadQuickQueries();
+      }catch(e){ console.error(e); Swal.fire({icon:'error', title:'Error', text:'No se pudo actualizar la consulta.'}); }
+    }
+
+    async function deleteQuery(id){
+      try{
+        const res = await Swal.fire({
+          title:'Eliminar consulta',
+          text:'¿Confirmas eliminar esta consulta?',
+          showCancelButton:true,
+          confirmButtonText:'Eliminar',
+          icon:'warning'
+        });
+        if (!res.isConfirmed) return;
+        await db.collection('quickQueries').doc(id).delete();
+        Swal.fire({icon:'success', title:'Eliminado'});
+        loadQuickQueries();
+      }catch(e){ console.error(e); Swal.fire({icon:'error', title:'Error', text:'No se pudo eliminar.'}); }
+    }
+
+    function escapeHtml(str){
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    async function loadMembershipStats(){
+      await loadDashboard();
+    }
+
+    // ---------- DISEÑOS ----------
+    async function loadDesigns(){
+      const tbody = document.querySelector('#tblDesigns tbody');
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>`;
+
+      let currentMembership = 'free';
+      try{
+        const user = auth.currentUser;
+        if (user){
+          const ud = await db.collection('users').doc(user.uid).get().catch(()=>null);
+          if (ud && ud.exists) currentMembership = (ud.data().membership || 'free').toLowerCase();
+        }
+      }catch(e){ console.warn('No se pudo obtener membership del usuario', e); }
+
+      const snap = await db.collection('designs').orderBy('createdAt','desc').get();
+      tbody.innerHTML = '';
+      snap.forEach(doc=>{
+        const d = doc.data();
+        const tr = document.createElement('tr');
+
+        const tdName = document.createElement('td'); tdName.textContent = d.name || '-';
+        const tdCat  = document.createElement('td'); tdCat.textContent = d.category || '-';
+        const tdType = document.createElement('td'); tdType.textContent = (d.type==='premium') ? '💎 Premium' : '';
+        const tdPrice= document.createElement('td');
+        if (d.type === 'premium') {
+          tdPrice.innerHTML = `<span class="design-price badge">S/ ${d.price || 0}</span>`;
+        } else {
+          tdPrice.textContent = '—';
+        }
+        const tdUploader = document.createElement('td'); tdUploader.textContent = d.uploaderEmail || '-';
+
+        const tdAction = document.createElement('td');
+        const btn = document.createElement('button');
+        if ((d.type || 'gratis').toLowerCase() === 'gratis'){
+          btn.className = 'btn-primary btn-download';
+          btn.textContent = 'Descarga Gratis';
+          btn.title = 'Descarga Gratis';
+          btn.addEventListener('click', (e)=>{
+            e.preventDefault();
+            (async ()=>{
+              try{
+                if (d.downloadUrl) return window.open(d.downloadUrl, '_blank');
+                if (d.fileStoragePath) {
+                  const ref = storage.ref(d.fileStoragePath);
+                  const url = await ref.getDownloadURL();
+                  return window.open(url, '_blank');
+                }
+                if (d.googleDriveUrl || d.driveUrl) return window.open(d.googleDriveUrl || d.driveUrl, '_blank');
+                Swal.fire({icon:'info', title:'Enlace no disponible', text:'No hay enlace de descarga disponible para este diseño.'});
+              }catch(err){
+                console.error('Error abriendo descarga:', err);
+                Swal.fire({icon:'error', title:'Error', text:'No se pudo iniciar la descarga.'});
+              }
+            })();
+          });
+        } else {
+          if (currentMembership === 'free'){
+            btn.className = 'btn-outline';
+            btn.textContent = '🔒 Adquiere membresía';
+            btn.title = 'Necesitas una membresía';
+            btn.addEventListener('click', (e)=>{
+              e.preventDefault();
+              showSection('membresias');
+              Swal.fire({icon:'info', title:'Membresía requerida', text:'Para descargar este diseño necesitas una membresía activa.'});
+            });
+          } else {
+            btn.className = 'btn-primary btn-download';
+            btn.textContent = 'Descargar';
+            btn.title = 'Descargar diseño premium';
+            btn.addEventListener('click', (e)=>{
+              e.preventDefault();
+              (async ()=>{
+                try{
+                  if (d.downloadUrl) return window.open(d.downloadUrl, '_blank');
+                  if (d.fileStoragePath) {
+                    const ref = storage.ref(d.fileStoragePath);
+                    const url = await ref.getDownloadURL();
+                    return window.open(url, '_blank');
+                  }
+                  if (d.googleDriveUrl || d.driveUrl) return window.open(d.googleDriveUrl || d.driveUrl, '_blank');
+                  Swal.fire({icon:'info', title:'Enlace no disponible', text:'No hay enlace de descarga disponible.'});
+                }catch(err){
+                  console.error('Error abriendo descarga:', err);
+                  Swal.fire({icon:'error', title:'Error', text:'No se pudo iniciar la descarga.'});
+                }
+              })();
+            });
+            tdPrice.textContent = '';
+          }
+        }
+        tdAction.appendChild(btn);
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdCat);
+        tr.appendChild(tdType);
+        tr.appendChild(tdPrice);
+        tr.appendChild(tdUploader);
+        tr.appendChild(tdAction);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ---------- ADMINISTRADORES ----------
+    async function loadAdmins(){
+      const tbody = document.querySelector("#tblAdmins tbody");
+      tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:var(--text-dim);">Cargando...</td></tr>`;
+      const snap = await db.collection("users")
+        .where("role","in",["admin","super_admin","owner"])
+        .get()
+        .catch(()=>null);
+
+      if (!snap || snap.empty){
+        tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:var(--text-dim);">No hay administradores registrados</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = "";
+      snap.forEach(doc=>{
+        const u = doc.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${u.email}</td><td>${u.role}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function promoteAdmin(){
+      const email = (document.getElementById("newAdminEmail").value || "").trim().toLowerCase();
+      const role  = document.getElementById("newAdminRole").value;
+
+      if (!email){
+        Swal.fire({icon:"info",title:"Ingresa un correo"});
+        return;
+      }
+
+      const snap = await db.collection("users").where("email","==",email).limit(1).get();
+      if (snap.empty){
+        Swal.fire({icon:"warning",title:"Usuario no encontrado"});
+        return;
+      }
+      const docRef = snap.docs[0].ref;
+      await docRef.set({role},{merge:true});
+      Swal.fire({icon:"success",title:"Rol actualizado"});
+      loadAdmins();
+    }
+
+    // ---------- SUBIR DISEÑO (preview local) ----------
+    const designTypeEl = document.getElementById("designType");
+    const priceGroup   = document.getElementById("priceGroup");
+
+    designTypeEl.addEventListener("change",()=>{
+      priceGroup.style.display = (designTypeEl.value === "premium") ? "block" : "none";
+    });
+
+    const imgInput    = document.getElementById("designImage");
+    const previewBox  = document.getElementById("previewBox");
+
+    function updatePreviewInfo(){
+      document.getElementById("pvName").textContent     = document.getElementById("designName").value || "-";
+      document.getElementById("pvCategory").textContent = document.getElementById("designCategory").value || "-";
+      document.getElementById("pvType").textContent     = designTypeEl.value === "premium" ? "Premium" : "";
+      const p = document.getElementById("designPrice").value;
+      document.getElementById("pvPrice").textContent    = designTypeEl.value==="premium" ? ("S/ " + (p || "0")) : "—";
+      const fmts = document.getElementById("designFormats").value;
+      document.getElementById("pvFormats").textContent  = fmts || "-";
+    }
+
+    ["designName","designCategory","designType","designPrice","designFormats"]
+      .forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.addEventListener("input",updatePreviewInfo);
+      });
+
+    function handleFiles(files){
+      const file = files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = e=>{
+        previewBox.innerHTML = `
+          <div class="preview-image-frame">
+            <div class="preview-image-container">
+              <img src="${e.target.result}" alt="Preview" class="preview-image">
+            </div>
+            <div class="preview-filename">${file.name}</div>
+          </div>
+        `;
+        try{ updatePreviewInfo(); }catch(err){}
+      };
+      reader.readAsDataURL(file);
+    }
+
+    if (imgInput) imgInput.addEventListener("change",e=>handleFiles(e.target.files));
+
+    // Mostrar preview cuando el usuario pega una URL en el campo previewUrl
+    const previewUrlInputEl = document.getElementById('previewUrl');
+    if (previewUrlInputEl){
+      previewUrlInputEl.addEventListener('input', (e)=>{
+        const v = (e.target.value || '').trim();
+        if (!v) {
+          previewBox.innerHTML = `
+            <div style="font-size:2.3rem;">🖼️</div>
+            <p style="color:var(--text-dim);font-size:.9rem;">Selecciona una imagen para ver la vista previa.</p>
+          `;
+          return;
+        }
+        try{
+          previewBox.innerHTML = `
+            <div class="preview-image-frame">
+              <div class="preview-image-container">
+                <img src="${v}" alt="Preview URL" class="preview-image" onerror="(function(){this.onerror=null;this.src='../img/placeholder.svg'; this.parentNode.innerHTML='<div style=\"color:var(--text-dim);padding:20px;text-align:center;\">❌ No se pudo cargar la imagen</div>'; }).call(this);">
+              </div>
+              <div class="preview-filename">Preview desde URL</div>
+            </div>
+          `;
+          try{ updatePreviewInfo(); }catch(_){}
+        }catch(err){ console.warn('No se pudo renderizar preview desde URL', err); }
+      });
+    }
+
+    // Stub compat (no sube, solo deja la modular)
+    const _compatUploadStub = (e)=>{
+      e.preventDefault();
+      console.log('Compat upload handler removed — modular handler active.');
+      return;
+    };
+    try{
+      const formEl = document.getElementById('formUploadDesign');
+      if(formEl){
+        formEl.removeEventListener && formEl.removeEventListener('submit', _compatUploadStub);
+        formEl.addEventListener('submit', _compatUploadStub);
+      }
+    }catch(e){ console.warn('Could not attach compat stub', e); }
+
+    // Helpers navegación
+    function safeRedirect(routePath, filePath) {
+      try {
+        if (window.location.protocol === 'file:') {
+          window.location.href = filePath;
+          return;
+        }
+        fetch(routePath, { method: 'HEAD' }).then(res => {
+          if (res && res.ok) window.location.href = routePath; else window.location.href = filePath;
+        }).catch(()=> window.location.href = filePath);
+      } catch (err) {
+        console.error('safeRedirect error', err); window.location.href = filePath;
+      }
+    }
+
+    function goToHome(){
+      const loc = window.location;
+      const isLocalFile = loc.protocol === 'file:';
+      const isLiveServer = loc.hostname === '127.0.0.1' || loc.hostname === 'localhost';
+      if (isLocalFile) return window.location.href = 'Index.html';
+      if (isLiveServer) return window.location.href = 'Index.html';
+      safeRedirect('/', '../Index.html');
+    }
+
+    (function mapLegacyIds(){
+      const btnHome = document.getElementById('btnHome') || document.getElementById('btnGoHome');
+      if (btnHome) btnHome.addEventListener('click', (e)=>{ e.preventDefault(); goToHome(); });
+
+      const btnLogout = document.getElementById('btnLogout') || document.getElementById('logoutBtn');
+      if (btnLogout) btnLogout.addEventListener('click', async (e)=>{ e.preventDefault(); try{ await auth.signOut(); safeRedirect('/login','login.html'); }catch(err){ console.error(err); safeRedirect('/login','login.html'); } });
+
+      if (typeof window.showSection === 'undefined'){
+        window.showSection = function(section){
+          const link = document.querySelector(`.nav-link[data-section="${section}"]`);
+          if (link) link.click();
+          else {
+            const s = document.getElementById('section-' + section);
+            if (s){
+              document.querySelectorAll('.main .section').forEach(el => el.style.display='none');
+              s.style.display='block';
+            }
+          }
+        };
+      }
+    })();
+
+    // El input `designFile` fue eliminado; no hay manejadores que re-habiliten subida directa.
+  </script>
+
+<!-- ======================= CONTROL DE SESIÓN LOGIN/LOGOUT ======================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Esperar que todo cargue antes de acceder al botón
+  const ADMIN_EMAIL = "hauxwellapaguenoalberson@gmail.com";
+
+  // Inicializar Firebase si aún no está
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+      authDomain: "design-reyes.firebaseapp.com",
+      projectId: "design-reyes",
+      storageBucket: "design-reyes.appspot.com",
+      messagingSenderId: "454744557781",
+      appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+      measurementId: "G-KCEX0JCC76"
+    });
+  }
+
+  const auth = firebase.auth();
+  const loginBtn = document.querySelector(".btn.btn-primary");
+
+  if (!loginBtn) {
+    console.warn("⚠️ No se encontró el botón de login.");
+    return;
+  }
+
+  // Escucha cambios de sesión
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      const email = (user.email || "").toLowerCase();
+
+      // ✅ Si es admin
+      if (email === ADMIN_EMAIL) {
+        loginBtn.innerHTML = `<i class="icon">👑</i><span>Panel Admin</span>`;
+        loginBtn.onclick = () => (window.location.href = "admin.html");
+
+        // Si está en login.html lo redirige automáticamente
+        if (window.location.pathname.includes("login.html")) {
+          window.location.href = "admin.html";
+        }
+      } 
+      // ✅ Si es usuario normal
+      else {
+        loginBtn.innerHTML = `<i class="icon">👋</i><span>Mi cuenta</span>`;
+        loginBtn.onclick = () => (window.location.href = "dashboard.html");
+
+        if (window.location.pathname.includes("login.html")) {
+          window.location.href = "dashboard.html";
+        }
+      }
+    } 
+    // 🚪 Si no hay sesión
+    else {
+      loginBtn.innerHTML = `<i class="icon">👤</i><span>Iniciar sesión</span>`;
+      loginBtn.onclick = () => (window.location.href = "login.html");
+    }
+  });
+});
+</script>
+
+<!-- Script para navegación de secciones en el panel admin -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Navegación de secciones por data-section
+  const navLinks = document.querySelectorAll('.nav-link[data-section]');
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const section = link.getAttribute('data-section');
+      // Oculta todas las secciones
+      document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+      // Muestra la sección correspondiente
+      const target = document.getElementById('section-' + section);
+      if (target) target.style.display = '';
+      // Marca el link activo
+      navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+});
+</script>
+
+  <!-- Script para gestionar catálogo local (sin Firebase Storage) -->
+  <script src="../JS/admin-catalog-manager.js"></script>
+
+  <!-- Módulo Firebase v10 (modular) - handler alternativo de subida con LOGS -->
+  <script type="module">
+    window.USE_MODULAR_UPLOAD = true;
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const cfg = window.firebaseConfig || {
+      apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+      authDomain: "design-reyes.firebaseapp.com",
+      projectId: "design-reyes",
+      storageBucket: "design-reyes.appspot.com",
+      messagingSenderId: "454744557781",
+      appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+      measurementId: "G-KCEX0JCC76"
+    };
+
+    const appMod = initializeApp(cfg);
+    const storageMod = getStorage(appMod);
+    const dbMod = getFirestore(appMod);
+
+    const getCurrentUser = ()=> {
+      try{
+        return (window.firebase && window.firebase.auth) ? window.firebase.auth().currentUser : null;
+      }catch(e){ return null; }
+    };
+
+    function setProgressUI(pct, statusText){
+      try{
+        const progressBar = document.getElementById('uploadProgress');
+        const progressFill = document.getElementById('uploadProgressFill');
+        const progressText = document.getElementById('uploadProgressText');
+        const big = document.getElementById('uploadProgressBig');
+        const status = document.getElementById('uploadStatus');
+
+        if (progressBar) progressBar.style.display = 'block';
+        if (progressFill) progressFill.style.width = pct + '%';
+        if (progressText) progressText.textContent = pct + '%';
+        if (big) big.textContent = pct + '%';
+        if (status && statusText) status.textContent = statusText;
+
+        // reset clases de éxito si no es 100
+        if (progressBar && progressFill && big){
+          if (pct >= 100){
+            progressBar.classList.add('success');
+            progressFill.classList.add('success','pulse');
+            big.classList.add('success');
+          } else {
+            progressBar.classList.remove('success');
+            progressFill.classList.remove('success','pulse');
+            big.classList.remove('success');
+          }
+        }
+      }catch(e){
+        console.warn('setProgressUI error', e);
+      }
+    }
+
+    async function uploadFileWithProgress(storageRefPath, file, label){
+      // Informative log for debugging
+      try{ console.info('🚀 Iniciando subida', { label, path: storageRefPath, name: file.name, size: file.size, type: file.type }); }catch(e){}
+      const refObj = sRef(storageMod, storageRefPath);
+      const task = uploadBytesResumable(refObj, file);
+      // expose a safe cancel wrapper
+      try{
+        window.currentModularUploadTask = {
+          _task: task,
+          cancel: ()=>{ try{ if (typeof task.cancel === 'function') task.cancel(); }catch(e){ console.warn('Cancel failed', e); } }
+        };
+      }catch(e){ console.warn('Could not set currentModularUploadTask', e); }
+
+      return new Promise((resolve, reject)=>{
+        task.on('state_changed', snapshot=>{
+          const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          setProgressUI(pct, `Subiendo ${label}... (${pct}%)`);
+          try{ console.debug('[upload] progress', { label, name: file.name, bytesTransferred: snapshot.bytesTransferred, totalBytes: snapshot.totalBytes, pct }); }catch(e){}
+        }, err=>{
+          try{ console.error(`❌ Error en subida [${label}]`, { code: err && err.code, message: err && err.message }); }catch(e){}
+          try{ window.currentModularUploadTask = null; }catch(e){}
+          reject(err);
+        }, async ()=>{
+          try{
+            const url = await getDownloadURL(task.snapshot.ref);
+            try{ console.info(`✅ Subida completada [${label}]`, { url }); }catch(e){}
+            try{ window.currentModularUploadTask = null; }catch(e){}
+            resolve(url);
+          }catch(e){
+            try{ console.error(`❌ Error obteniendo URL [${label}]`, e); }catch(e){}
+            try{ window.currentModularUploadTask = null; }catch(e2){}
+            reject(e);
+          }
+        });
+      });
+    }
+
+    // Normaliza enlaces de Google Drive para intentar obtener un enlace de descarga directo
+    function normalizeDriveLink(url){
+      if (!url || typeof url !== 'string') return { isDrive:false };
+      url = url.trim();
+      try{
+        // Extraer ID desde /d/ID/ o ?id=ID
+        const re1 = /\/d\/([a-zA-Z0-9_-]+)/;
+        const re2 = /[?&]id=([a-zA-Z0-9_-]+)/;
+        const m1 = url.match(re1);
+        const m2 = url.match(re2);
+        const folderMatch = url.match(/drive\.google\.com\/folders\/([a-zA-Z0-9_-]+)/);
+        const fileId = (m1 && m1[1]) || (m2 && m2[1]) || (folderMatch && folderMatch[1]) || null;
+        if (!fileId) {
+          // si no se detecta ID, pero contiene drive.google.com, retornamos el URL original
+          if (url.includes('drive.google.com')) return { isDrive:true, original: url };
+          return { isDrive:false };
+        }
+
+        // Si parece una carpeta, no hay descarga directa
+        if (url.includes('/folders/')){
+          return {
+            isDrive:true,
+            type:'folder',
+            id: fileId,
+            original: url,
+            view: `https://drive.google.com/drive/folders/${fileId}`
+          };
+        }
+
+        // Generar enlaces útiles
+        const download = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        const view = `https://drive.google.com/uc?export=view&id=${fileId}`;
+        const thumbnail = `https://drive.google.com/thumbnail?id=${fileId}`;
+        return { isDrive:true, type:'file', id: fileId, original: url, download, view, thumbnail };
+      }catch(e){
+        return { isDrive:false };
+      }
+    }
+
+    document.getElementById('formUploadDesign').addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      if (!window.USE_MODULAR_UPLOAD) return;
+
+      const user = getCurrentUser();
+      if (!user){
+        Swal.fire({icon:'error', title:'Sesión expirada', text:'Inicia sesión nuevamente.'});
+        console.error('💥 No hay usuario autenticado al intentar subir diseño.');
+        return;
+      }
+      console.log('👤 Usuario actual para subida:', user.email, user.uid);
+
+      const name = (document.getElementById('designName').value || '').trim();
+      const desc = (document.getElementById('designDesc').value || '').trim();
+      const category = document.getElementById('designCategory').value || '';
+      const type = (document.getElementById('designType').value || 'gratis');
+      const price = Number(document.getElementById('designPrice').value || 0);
+      const formatsText = (document.getElementById('designFormats').value || '').trim();
+      const formatsArr = formatsText ? formatsText.split(',').map(s=>s.trim()).filter(Boolean) : [];
+      const driveUrl = (document.getElementById('driveUrl').value || '').trim();
+      const previewUrlInput = (document.getElementById('previewUrl') && document.getElementById('previewUrl').value) ? (document.getElementById('previewUrl').value || '').trim() : '';
+      // Subida de preview desde el navegador DESHABILITADA en modo local - usar previewUrl.
+      const imgFile = null;
+  // El input `designFile` fue eliminado; tomamos assetFile como null para evitar accesos a elemento inexistente
+  const assetFile = null;
+
+      if (!previewUrlInput){
+        Swal.fire({icon:'info',title:'Falta la imagen',text:'Proporciona la URL de la imagen de preview en el campo "URL de preview".'});
+        return;
+      }
+      // Ahora usamos ENLACE DE DRIVE como fuente principal de descarga.
+      // Para evitar problemas de CORS con Firebase Storage en desarrollo, requerimos
+      // que el administrador provea el enlace de Google Drive del archivo descargable.
+      if (!driveUrl){
+        Swal.fire({icon:'info', title:'Falta el enlace de Google Drive', text:'Por favor proporciona el enlace de Google Drive del archivo descargable.'});
+        return;
+      }
+
+      const uploadBtn = document.getElementById('btnUploadDesign');
+      const btnCancel = document.getElementById('btnCancelUpload');
+      if (uploadBtn){ uploadBtn.disabled = true; uploadBtn.textContent = 'Subiendo...'; }
+      if (btnCancel) btnCancel.style.display = 'inline-block';
+      setProgressUI(0,'Preparando subida...');
+
+      // --- listeners utilitarios para botones de Drive (se agregan dinámicamente por si el DOM cambia)
+      try{
+        const btnVerify = document.getElementById('btnVerifyDrive');
+        const btnThumb = document.getElementById('btnUseDriveThumb');
+        const driveInput = document.getElementById('driveUrl');
+        const previewUrlInputEl = document.getElementById('previewUrl');
+
+        if (btnVerify){
+          btnVerify.onclick = (e)=>{
+            e.preventDefault();
+            const drv = normalizeDriveLink((driveInput && driveInput.value) || '');
+            if (!drv || !drv.isDrive){
+              Swal.fire({icon:'warning',title:'Enlace inválido',text:'Introduce un enlace de Google Drive válido.'});
+              return;
+            }
+            const target = drv.view || drv.original || drv.download;
+            if (target) window.open(target, '_blank');
+          };
+        }
+
+        if (btnThumb){
+          btnThumb.onclick = (e)=>{
+            e.preventDefault();
+            const drv = normalizeDriveLink((driveInput && driveInput.value) || '');
+            if (!drv || !drv.isDrive){
+              Swal.fire({icon:'warning',title:'Enlace inválido',text:'Introduce un enlace de Google Drive válido.'});
+              return;
+            }
+            if (drv.thumbnail){
+              if (previewUrlInputEl){
+                previewUrlInputEl.value = drv.thumbnail;
+                previewUrlInputEl.dispatchEvent(new Event('input'));
+                Swal.fire({icon:'success',title:'Miniatura aplicada',text:'Se usó la miniatura de Drive como preview.'});
+              }
+            } else {
+              Swal.fire({icon:'info',title:'Sin miniatura',text:'No se detectó miniatura automática para este enlace.'});
+            }
+          };
+        }
+      }catch(e){ console.warn('No se pudieron enlazar botones Drive', e); }
+
+      try{
+        // No subimos previews desde el navegador en este modo: usamos exclusivamente la URL de preview proporcionada.
+        let previewUrl = previewUrlInput || null;
+
+          // Normalizar enlace de Drive para obtener un downloadUrl directo cuando sea posible
+          try{
+            const drv = normalizeDriveLink(driveUrl);
+            if (drv && drv.isDrive && drv.download){
+              downloadUrl = drv.download;
+              console.log('🔗 Drive normalizado a downloadUrl:', downloadUrl);
+            } else {
+              // dejar downloadUrl como estaba (driveUrl) si no se pudo normalizar
+              downloadUrl = downloadUrl || driveUrl || null;
+            }
+
+            // Si no hay preview y Drive tiene una vista pública, usarla como preview
+            if ((!previewUrl || previewUrl === null) && drv && drv.view){
+              previewUrl = drv.view;
+              console.log('🖼️ Usando vista de Drive como preview:', previewUrl);
+            }
+          }catch(e){ console.warn('No se pudo normalizar enlace Drive', e); }
+
+        // No subimos el archivo al Storage: usamos el enlace de Drive proporcionado.
+        let fileStoragePath = null, fileName = null, downloadUrl = driveUrl || null;
+        if (assetFile){
+          // Si el admin adjuntó un archivo pero también proporcionó un enlace, lo ignoramos
+          // para evitar intentos de subida desde el navegador que pueden fallar por CORS.
+          console.info('⚠️ Ignorando archivo adjunto en favor del enlace de Drive.');
+        }
+
+        console.log('📝 Guardando documento en Firestore...');
+        const docRef = await addDoc(collection(dbMod, 'designs'), {
+          name,
+          description: desc,
+          category,
+          type,
+          price: type === 'premium' ? price : 0,
+          formats: formatsArr,
+          previewUrl,
+          driveUrl: driveUrl || null,
+          googleDriveUrl: driveUrl || null,
+          fileStoragePath: fileStoragePath || null,
+          fileName: fileName || null,
+          downloadUrl: downloadUrl || null,
+          createdAt: serverTimestamp(),
+          uploaderUid: user.uid,
+          uploaderEmail: user.email || ''
+        });
+        console.log('✅ Documento guardado en Firestore con ID:', docRef.id);
+
+        setProgressUI(100,'Completado');
+
+        const dlLink = downloadUrl || driveUrl || previewUrl || null;
+        const htmlPreview = `
+          <div style="text-align:left;">
+            <div style="text-align:center;margin-bottom:12px;">
+              <div style="display:inline-block;position:relative;">
+                <img src="${previewUrl}" style="max-width:320px;max-height:220px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);" alt="Preview" onerror="(function(){this.onerror=null;this.src='../img/default-preview.png'; var b=this.parentNode.querySelector('.img-fallback-badge'); if(b) b.style.display='block'; }).call(this);">
+                <span class="img-fallback-badge" style="display:none;position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.6);color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;">Preview no disponible</span>
+              </div>
+            </div>
+            <p style="margin:6px 0;"><strong>Nombre:</strong> ${window.escapeHtml ? escapeHtml(name) : name}</p>
+            <p style="margin:6px 0;"><strong>Archivo:</strong> ${window.escapeHtml ? escapeHtml(fileName || 'No provisto') : (fileName || 'No provisto')}</p>
+            <p style="margin:6px 0;"><strong>ID:</strong> ${docRef.id}</p>
+            ${dlLink ? `<p style="margin-top:12px;"><a href="${dlLink}" target="_blank" class="btn-outline">Abrir descarga</a></p>` : ''}
+          </div>
+        `;
+
+        Swal.fire({
+          icon:'success',
+          title:'Diseño subido correctamente',
+          html: htmlPreview,
+          width: 750
+        });
+
+        try{
+          const actions = document.getElementById('uploadActions');
+          if (actions && dlLink){
+            actions.innerHTML = `
+              <a href="${dlLink}" target="_blank" class="btn-outline" style="margin-right:8px;">Abrir enlace</a>
+              <button type="button" id="btnCopyLink" class="btn-outline">Copiar enlace</button>
+            `;
+            actions.style.display = 'block';
+            setTimeout(()=>{
+              const copyBtn = document.getElementById('btnCopyLink');
+              if (copyBtn){
+                copyBtn.addEventListener('click', ()=>{
+                  navigator.clipboard.writeText(dlLink)
+                    .then(()=>Swal.fire({icon:'success',title:'Enlace copiado'}))
+                    .catch(()=>Swal.fire({icon:'error',title:'No se pudo copiar'}));
+                });
+              }
+            },50);
+          }
+        }catch(e){
+          console.warn('No se pudieron configurar acciones de copia de enlace', e);
+        }
+
+        try{
+          ev.target.reset();
+          const previewBox = document.getElementById('previewBox');
+          if (previewBox){
+            previewBox.innerHTML = `<div style="font-size:2.3rem;">🖼️</div><p style="color:var(--text-dim);font-size:.9rem;">Selecciona una imagen para ver la vista previa.</p>`;
+          }
+          document.getElementById("pvName").textContent = "-";
+          document.getElementById("pvCategory").textContent = "-";
+          document.getElementById("pvType").textContent = "-";
+          document.getElementById("pvPrice").textContent = "-";
+          document.getElementById("pvFormats").textContent = "-";
+        }catch(e){
+          console.warn('No se pudo limpiar la vista previa', e);
+        }
+
+        try{
+          if (typeof loadDashboard === 'function') loadDashboard();
+        }catch(e){
+          console.warn('No se pudo refrescar dashboard', e);
+        }
+
+      }catch(err){
+        console.error('💥 Error en proceso completo de subida:', err);
+        Swal.fire({icon:'error', title:'Error al subir', text: err.message || String(err)});
+      }finally{
+        try{
+          const uploadBtn2 = document.getElementById('btnUploadDesign');
+          if (uploadBtn2){ uploadBtn2.disabled = false; uploadBtn2.textContent = 'Subir diseño'; }
+          const btnCancel2 = document.getElementById('btnCancelUpload');
+          if (btnCancel2) btnCancel2.style.display = 'none';
+        }catch(e){}
+      }
+    });
+  </script>
+</body>
+</html>

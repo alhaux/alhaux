@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload con Reintentos</title>
+    <link rel="stylesheet" href="CSS/upload-styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-title {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .status-panel {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            color: white;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .btn-test {
+            background: linear-gradient(135deg, #00d4aa, #00a3ff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-test:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+        
+        .btn-test:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🧪 Test Sistema Upload con Reintentos</h1>
+        
+        <!-- Upload Area -->
+        <div class="upload-area glassmorphism" id="uploadArea">
+            <div class="upload-icon">📤</div>
+            <h3>Selecciona un archivo para probar</h3>
+            <p>Arrastra y suelta o haz clic para seleccionar</p>
+            <input type="file" id="fileInput" accept="image/*,.pdf,.ai,.psd,.zip" style="display: none;">
+            <div class="upload-progress" id="uploadProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+        
+        <!-- Controles de Test -->
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn-test" onclick="simulateFailure = false; testUpload()">
+                ✅ Test Upload Normal
+            </button>
+            <button class="btn-test" onclick="simulateFailure = true; testUpload()">
+                🔄 Test con Reintentos (Simular Fallos)
+            </button>
+            <button class="btn-test" onclick="clearLog()">
+                🧹 Limpiar Log
+            </button>
+        </div>
+        
+        <!-- Panel de Estado -->
+        <div class="status-panel" id="statusPanel">
+            <div>📊 Sistema de Upload con Reintentos Cargado</div>
+            <div>✅ Compresión de imágenes habilitada (>2MB)</div>
+            <div>🔄 Reintentos automáticos: 3 intentos con delay exponencial</div>
+            <div>⏱️ Timeout por intento: 3 minutos</div>
+            <div>---</div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Firebase Config -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCEw2aXDJi0iOueNM2KqiSWoONgkBaMcfw",
+            authDomain: "sitio-web-ivan-reyes.firebaseapp.com",
+            projectId: "sitio-web-ivan-reyes",
+            storageBucket: "sitio-web-ivan-reyes.appspot.com",
+            messagingSenderId: "590550659847",
+            appId: "1:590550659847:web:6c97eca0c7b1a7c6c5555b"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    
+    <!-- Upload Manager -->
+    <script src="JS/upload-manager.js"></script>
+    
+    <script>
+        let simulateFailure = false;
+        let selectedFile = null;
+        const statusPanel = document.getElementById('statusPanel');
+        
+        // Inicializar Upload Manager para test
+        const uploader = new DesignUploader();
+        
+        // Setup drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#00d4aa';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(255,255,255,0.3)';
+            handleFile(e.dataTransfer.files[0]);
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+        
+        function handleFile(file) {
+            if (file) {
+                selectedFile = file;
+                logStatus(`📁 Archivo seleccionado: ${file.name} (${(file.size/1024/1024).toFixed(2)}MB)`);
+                uploadArea.querySelector('h3').textContent = file.name;
+                uploadArea.querySelector('p').textContent = `${(file.size/1024/1024).toFixed(2)}MB - Listo para subir`;
+            }
+        }
+        
+        async function testUpload() {
+            if (!selectedFile) {
+                Swal.fire('Error', 'Por favor selecciona un archivo primero', 'error');
+                return;
+            }
+            
+            logStatus(`🚀 Iniciando test de upload...`);
+            logStatus(`📊 Configuración: simulateFailure=${simulateFailure}`);
+            
+            const progressBar = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            try {
+                // Simular fallos para test de reintentos
+                if (simulateFailure) {
+                    // Modificar temporalmente Firebase Storage para simular fallos
+                    const originalPut = firebase.storage().ref().put;
+                    let attemptCount = 0;
+                    
+                    firebase.storage().ref().put = function(file, metadata) {
+                        attemptCount++;
+                        logStatus(`🔄 Intento simulado #${attemptCount}`);
+                        
+                        if (attemptCount < 3) {
+                            // Simular fallo en los primeros 2 intentos
+                            return {
+                                on: (event, progress, error, complete) => {
+                                    setTimeout(() => {
+                                        error(new Error('Simulated network failure'));
+                                    }, 1000);
+                                },
+                                cancel: () => {}
+                            };
+                        } else {
+                            // Permitir éxito en el 3er intento
+                            return originalPut.call(this, file, metadata);
+                        }
+                    };
+                }
+                
+                const testPath = `test-uploads/retry-test-${Date.now()}`;
+                const downloadURL = await uploader.uploadFileWithRetry(selectedFile, testPath);
+                
+                logStatus(`✅ ¡Upload exitoso!`);
+                logStatus(`🔗 URL: ${downloadURL.substring(0, 60)}...`);
+                
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Archivo subido correctamente con el sistema de reintentos',
+                    icon: 'success',
+                    confirmButtonText: 'Genial'
+                });
+                
+            } catch (error) {
+                logStatus(`❌ Error final: ${error.message}`);
+                Swal.fire({
+                    title: 'Error',
+                    text: `Upload falló: ${error.message}`,
+                    icon: 'error',
+                    confirmButtonText: 'Entendido'
+                });
+            } finally {
+                progressBar.style.display = 'none';
+                // Restaurar función original si fue modificada
+                if (simulateFailure) {
+                    location.reload(); // Recargar para restaurar el estado
+                }
+            }
+        }
+        
+        function logStatus(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.textContent = `[${timestamp}] ${message}`;
+            statusPanel.appendChild(div);
+            statusPanel.scrollTop = statusPanel.scrollHeight;
+        }
+        
+        function clearLog() {
+            statusPanel.innerHTML = `
+                <div>📊 Sistema de Upload con Reintentos Cargado</div>
+                <div>✅ Compresión de imágenes habilitada (>2MB)</div>
+                <div>🔄 Reintentos automáticos: 3 intentos con delay exponencial</div>
+                <div>⏱️ Timeout por intento: 3 minutos</div>
+                <div>---</div>
+            `;
+        }
+        
+        // Log inicial
+        logStatus('🎯 Sistema listo para testing');
+    </script>
+</body>
+</html>

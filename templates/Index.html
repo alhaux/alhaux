@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DESIGN REYES | Tienda de Diseños Deportivos</title>
+  <link rel="icon" href="../img/LOGO DR SOLO BLANCO.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../CSS/global-styles.css">
+  <link rel="stylesheet" href="../CSS/components.css">
+  <link rel="stylesheet" href="../CSS/styles.css">
+  <link rel="stylesheet" href="../CSS/catalog-styles.css">
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #6236ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================= INFO BAR ======================= -->
+  <div class="info-bar">
+    🚀 Más de <strong>300 diseños premium</strong> disponibles | 💎 Actualizamos cada semana | 🏆 Descargas seguras y rápidas
+  </div>
+
+  <!-- ======================= NAVBAR ======================= -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-menu-toggle" id="menu-toggle">☰</div>
+      <nav class="navbar-right" id="menu">
+        <a href="#" class="nav-link">
+          <i class="icon">🏠</i>
+          <span>Inicio</span>
+        </a>
+        <a href="https://api.whatsapp.com/send/?phone=51924913748&text&type=phone_number&app_absent=0" class="nav-link" target="_blank">
+          <i class="icon">🎨</i>
+          <span>Solicitar Diseños</span>
+        </a>
+        <a href="membresia.html" class="nav-link">
+          <i class="icon">💎</i>
+          <span>Membresía</span>
+          <span class="badge">Nuevo</span>
+        </a>
+        <a href="#" class="nav-link">
+          <i class="icon">📚</i>
+          <span>Recursos</span>
+        </a>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='login.html'">
+          <i class="icon">👤</i>
+          <span>Iniciar sesión</span>
+        </button>
+      </nav>
+          </div>
+  </header>
+
+  <!-- ======================= HERO ======================= -->
+  <section class="hero">
+    <div class="hero-container">
+      <img src="../img/LOGO DR SOLO BLANCO.png" alt="Design Reyes" class="hero-logo" />
+      <div class="hero-search">
+        <input type="text" placeholder="Buscar diseños deportivos..." />
+        <button class="search-btn" aria-label="Buscar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+               fill="none" stroke="white" stroke-width="2" stroke-linecap="round"
+               stroke-linejoin="round" class="search-icon">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-buttons">
+      <button class="btn btn-primary" onclick="scrollToDesigns()">
+        <i class="icon">🧾</i>
+        <span>Ver Catálogo Completo</span>
+      </button>
+      <button class="btn btn-secondary" onclick="window.location.href='register.html'">
+        <i class="icon">💎</i>
+        <span>Plan Premium</span>
+        <span class="badge">-20% OFF</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ======================= CONTENIDO PRINCIPAL ======================= -->
+  <main class="layout">
+    <aside class="sidebar-left">
+      <h2 class="side-title">Categorías</h2>
+      <div class="cat-group">
+        <h3>Categorías</h3>
+        <div class="category-list" id="categoriasList">
+          <a href="#" class="category-link active" onclick="showAllDesigns(); return false;">
+            <i class="icon">🎨</i>
+            <span>Todos los diseños</span>
+            <span class="category-count" id="countAll">0</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="cat-group">
+        <h3>Gratis</h3>
+        <div class="category-list">
+          <a href="#" class="category-link" onclick="filterByCategoryAndPrice('INTERCLASES','gratis', this); return false;">
+            <i class="icon">🟢</i>
+            <span>INTERCLASES</span>
+            <span class="category-count" id="count-interclases-gratis">0</span>
+          </a>
+          <a href="#" class="category-link" onclick="filterByCategoryAndPrice('FUTSALEROS','gratis', this); return false;">
+            <i class="icon">🟢</i>
+            <span>FUTSALEROS</span>
+            <span class="category-count" id="count-futsaleros-gratis">0</span>
+          </a>
+          <a href="#" class="category-link" onclick="filterByCategoryAndPrice('EQUIPOS OFICIALES','gratis', this); return false;">
+            <i class="icon">🟢</i>
+            <span>EQUIPOS OFICIALES</span>
+            <span class="category-count" id="count-equipos-oficiales-gratis">0</span>
+          </a>
+          <a href="#" class="category-link" onclick="filterByCategoryAndPrice('INTERNACIONALES','gratis', this); return false;">
+            <i class="icon">🟢</i>
+            <span>INTERNACIONALES</span>
+            <span class="category-count" id="count-internacionales-gratis">0</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="cat-group">
+        <h3>Premium</h3>
+        <div class="category-list">
+          <a href="#" class="category-link" onclick="filterByCategoryAndPrice('INTERCLASES','premium', this); return false;">
+            <i class="icon">🔴</i>
+            <span>INTERCLASES</span>
+            <span class="category-count" id="count-interclases-premium">0</span>
+          </a>
+          <a href="#" class="category-link" onclick="filterByCategoryAndPrice('FUTSALEROS','premium', this); return false;">
+            <i class="icon">🔴</i>
+            <span>FUTSALEROS</span>
+            <span class="category-count" id="count-futsaleros-premium">0</span>
+          </a>
+          <a href="#" class="category-link" onclick="filterByCategoryAndPrice('EQUIPOS OFICIALES','premium', this); return false;">
+            <i class="icon">🔴</i>
+            <span>EQUIPOS OFICIALES</span>
+            <span class="category-count" id="count-equipos-oficiales-premium">0</span>
+          </a>
+          <a href="#" class="category-link" onclick="filterByCategoryAndPrice('INTERNACIONALES','premium', this); return false;">
+            <i class="icon">🔴</i>
+            <span>INTERNACIONALES</span>
+            <span class="category-count" id="count-internacionales-premium">0</span>
+          </a>
+        </div>
+      </div>
+      
+      <div class="cat-group">
+        <h3>Por precio</h3>
+        <div class="price-list">
+          <a href="#" class="category-link" onclick="filterByPrice('premium'); return false;">
+            <i class="icon">💎</i>
+            <span>Premium</span>
+            <span class="badge">HOT</span>
+          </a>
+          <a href="#" class="category-link" onclick="filterByPrice('gratis'); return false;">
+            <i class="icon">🎁</i>
+            <span>Gratis</span>
+            <span class="badge">NEW</span>
+          </a>
+        </div>
+      </div>
+
+      <h2 class="side-title">Redes Sociales</h2>
+      <ul class="social-list">
+        <li><a href="#">Facebook</a></li>
+        <li><a href="https://www.tiktok.com/@design_reyes?_t=ZS-90zFVcDOUbA&_r=1" target="_blank">TikTok</a></li>
+        <li><a href="https://www.instagram.com/designreyes?" target="_blank">Instagram</a></li>
+      </ul>
+    </aside>
+
+    <section class="content-center">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 class="section-heading">Nuestros <span>Diseños Deportivos</span></h2>
+        <button 
+          id="reloadCatalogBtn" 
+          onclick="forceReloadCatalog()" 
+          style="
+            background: #6236ff; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s ease;
+          "
+          onmouseover="this.style.background='#7150ff'"
+          onmouseout="this.style.background='#6236ff'"
+          title="Forzar recarga del catálogo">
+          🔄 Actualizar
+        </button>
+      </div>
+      <div class="catalogo-scroll">
+        <div class="catalogo-grid" id="catalogoGrid">
+          <!-- Los diseños se cargarán dinámicamente aquí -->
+        </div>
+      </div>
+
+      <!-- PAGINACIÓN -->
+      <div class="pagination">
+        <a href="#" class="page active">1</a>
+        <a href="#" class="page">2</a>
+        <a href="#" class="page">3</a>
+        <span class="page-dots">...</span>
+        <a href="#" class="page">Siguiente →</a>
+      </div>
+    </section>
+
+    <aside class="sidebar-right">
+      <h2 class="side-title-right">Grupo de WhatsApp</h2>
+      <p class="side-desc">Únete y recibe nuevos diseños deportivos exclusivos.</p>
+      <a href="https://chat.whatsapp.com/Gk0LjY6wVjE7NJTidnWaW9" class="btn-join-group" target="_blank">
+        Unirme al grupo
+      </a>
+
+      <h2 class="side-title-right">Consulta rápida</h2>
+      <form class="contact-form">
+        <label><span>Nombre</span><input type="text" placeholder="Tu nombre"></label>
+        <label><span>Correo</span><input type="email" placeholder="tucorreo@gmail.com"></label>
+        <label><span>Consulta</span><textarea rows="4" placeholder="Escribe tu consulta..."></textarea></label>
+        <button type="submit" class="btn-send">Enviar mensaje</button>
+      </form>
+    </aside>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../JS/download-limits-manager.js"></script>
+  <script src="../JS/catalog-sync.js"></script>
+  <script src="../JS/direct-download-manager.js"></script>
+  <script src="../JS/catalog.js"></script>
+
+  <script>
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+      authDomain: "design-reyes.firebaseapp.com",
+      projectId: "design-reyes",
+      storageBucket: "design-reyes.appspot.com",
+      messagingSenderId: "454744557781",
+      appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+      measurementId: "G-KCEX0JCC76"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    // Función para actualizar el contador de diseños
+    function updateDesignsCount(count) {
+      const infoBar = document.querySelector('.info-bar strong');
+      infoBar.textContent = `${count} diseños premium`;
+    }
+
+  </script>
+
+  <script>
+    // Escuchar cambios en la colección de diseños (después de inicializar Firebase)
+    function listenToDesignChanges() {
+      db.collection('designs')
+        .orderBy('createdAt', 'desc')
+        .onSnapshot((snapshot) => {
+          const changes = snapshot.docChanges();
+          
+          changes.forEach(change => {
+            if (change.type === 'added') {
+              console.log('Nuevo diseño agregado:', change.doc.data().name || 'Sin nombre');
+            }
+            if (change.type === 'modified') {
+              console.log('Diseño modificado:', change.doc.data().name || 'Sin nombre');
+            }
+            if (change.type === 'removed') {
+              console.log('Diseño eliminado:', change.doc.id);
+            }
+          });
+          
+          // Recargar catálogo con el sistema correcto
+          if (typeof forceReloadCatalog === 'function') {
+            console.log('🔄 Recargando catálogo por cambios...');
+            forceReloadCatalog();
+          }
+        });
+    }
+
+    // Iniciar escucha de cambios después de que todo esté cargado
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        listenToDesignChanges();
+      }, 2000); // Esperar 2 segundos para asegurar que todo esté listo
+    });
+  </script>
+
+  <script>
+  // Variables globales para el catálogo
+  let currentCategory = 'all';
+  let currentPage = 1;
+  const ITEMS_PER_PAGE = 12;
+  let allDesigns = [];
+
+  // Función para comprar un diseño (mantener compatibilidad)
+  async function purchaseDesign(designId) {
+    const user = auth.currentUser;
+    if (!user) {
+      Swal.fire({
+        title: 'Inicia sesión primero',
+        text: 'Necesitas una cuenta para comprar diseños',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Iniciar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = 'login.html';
+        }
+      });
+      return;
+    }
+
+    try {
+      const designDoc = await db.collection('designs').doc(designId).get();
+      const design = designDoc.data();
+      
+      const designName = design.name || 'Diseño sin nombre';
+      const designPrice = design.price || '0';
+      const designFormats = design.formats || 'PNG, PSD';
+
+      const result = await Swal.fire({
+        title: `Comprar "${designName}"`,
+        html: `
+          <p>Precio: S/ ${designPrice}</p>
+          <p>Formatos incluidos: ${designFormats}</p>
+          <p>El enlace de descarga se enviará a tu correo</p>
+        `,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Comprar ahora',
+        cancelButtonText: 'Cancelar'
+      });
+
+      if (result.isConfirmed) {
+        try {
+          // Registrar la venta
+          await db.collection('sales').add({
+            designId: designId,
+            designName: designName,
+            customerId: user.uid,
+            customerEmail: user.email,
+            amount: designPrice,
+            purchaseDate: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          Swal.fire({
+            title: '¡Compra exitosa!',
+            text: 'Te hemos enviado un correo con el enlace de descarga',
+            icon: 'success'
+          });
+        } catch (error) {
+          console.error(error);
+          Swal.fire('Error', 'No se pudo procesar tu compra', 'error');
+        }
+      }
+    } catch (error) {
+      console.error('Error en la compra:', error);
+      Swal.fire('Error', 'No se pudo completar la acción de compra', 'error');
+    }
+  }
+
+    // Función para ver detalles del diseño
+    async function viewDetails(designId) {
+      try {
+        const designDoc = await db.collection('designs').doc(designId).get();
+        const design = designDoc.data();
+        
+        const designName = design.name || 'Diseño sin nombre';
+        const designCategory = design.category || 'Sin categoría';
+        const designPrice = design.price || '0';
+        const designImageUrl = design.imageUrl || '../img/placeholder.svg';
+        const designFormats = design.formats || 'PNG, PSD';
+        const designDescription = design.description || 'Sin descripción disponible';
+
+        Swal.fire({
+          title: designName,
+          html: `
+            <div class="design-details-modal">
+              <img src="${designImageUrl}" alt="${designName}" style="max-width: 100%; border-radius: 8px; margin-bottom: 20px;">
+              <div class="design-info">
+                <p><strong>Categoría:</strong> ${designCategory}</p>
+                <p><strong>Precio:</strong> S/ ${designPrice}</p>
+                <p><strong>Formatos:</strong> ${designFormats}</p>
+                <p><strong>Descripción:</strong></p>
+                <p>${designDescription}</p>
+              </div>
+            </div>
+          `,
+          width: '600px',
+          showCancelButton: true,
+          confirmButtonText: 'Comprar ahora',
+          cancelButtonText: 'Cerrar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            purchaseDesign(designId);
+          }
+        });
+      } catch (error) {
+        console.error('Error al cargar detalles:', error);
+        Swal.fire('Error', 'No se pudieron cargar los detalles del diseño', 'error');
+      }
+    }
+
+    // Función para filtrar por categoría (usar la del catalog.js)
+    function filterByCategory(category) {
+      console.log('🔍 Filtrado delegado a catalog.js');
+      if (typeof window.filterByCategory === 'function') {
+        window.filterByCategory(category);
+      }
+    }
+
+        // Función para agregar diseños iniciales si no existen
+    async function addInitialDesigns() {
+      const initialDesigns = [
+        {
+          name: "BUGS BOONY",
+          imageUrl: "../img/BUGS BOONY.png",
+          category: "INTERCLASES",
+          type: "gratis",
+          price: "0.00",
+          formats: "PNG, PSD, AI",
+          description: "Diseño deportivo con tema de Bugs Bunny, perfecto para equipos juveniles.",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        {
+          name: "DRAGON CELESTE",
+          imageUrl: "../img/DRAGON CELESTE.png",
+          category: "FUTSALEROS",
+          type: "premium",
+          price: "30.00",
+          formats: "PNG, PSD, AI",
+          description: "Impresionante diseño de dragón en tonos celestes, ideal para equipos deportivos.",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }
+      ];
+
+      try {
+        const designsSnap = await db.collection('designs').get();
+        if (designsSnap.empty) {
+          console.log('Agregando diseños iniciales...');
+          for (const design of initialDesigns) {
+            await db.collection('designs').add(design);
+          }
+          console.log('Diseños iniciales agregados correctamente');
+        }
+      } catch (error) {
+        console.error('Error al agregar diseños iniciales:', error);
+      }
+    }
+
+    // Cargar diseños al iniciar y configurar recargas automáticas
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('🚀 Página cargada, iniciando carga de diseños...');
+      
+      // Mostrar indicador de carga inmediato
+      const catalogoGrid = document.getElementById('catalogoGrid');
+      if (catalogoGrid) {
+        catalogoGrid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+            <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #6236ff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top: 15px; color: #666;">Cargando catálogo...</p>
+          </div>
+        `;
+      }
+      
+      // Esperar a que se carguen todos los scripts
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Usar sistema de sincronización
+      try {
+        console.log('📡 Conectando con Firebase...');
+        
+        // Verificar si la función existe
+        if (typeof forceReloadCatalog === 'function') {
+          await forceReloadCatalog();
+          console.log('✅ Catálogo cargado exitosamente');
+        } else {
+          console.log('⚠️ forceReloadCatalog no disponible, intentando cargar diseños iniciales...');
+          await addInitialDesigns();
+          
+          // Cargar manualmente si no hay función de sincronización
+          await loadDesignsManually();
+        }
+        
+      } catch (error) {
+        console.error('❌ Error en carga inicial:', error);
+        
+        // Mostrar mensaje de error en el grid
+        if (catalogoGrid) {
+          catalogoGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+              <h3 style="color: #e74c3c; margin-bottom: 10px;">❌ Error de conexión</h3>
+              <p style="color: #999; margin-bottom: 15px;">No se pudo cargar el catálogo: ${error.message}</p>
+              <button onclick="location.reload()" style="background: #6236ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                🔄 Recargar página
+              </button>
+            </div>
+          `;
+        }
+      }
+    });
+    
+    // Función de carga manual como respaldo
+    async function loadDesignsManually() {
+      console.log('📚 Cargando diseños manualmente...');
+      const catalogoGrid = document.getElementById('catalogoGrid');
+      
+      try {
+        const snapshot = await db.collection('designs')
+          .orderBy('createdAt', 'desc')
+          .get();
+        
+        catalogoGrid.innerHTML = '';
+        
+        if (snapshot.empty) {
+          catalogoGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+              <h3 style="color: #666; margin-bottom: 10px;">📭 No hay diseños disponibles</h3>
+              <p style="color: #999;">Los diseños aparecerán aquí cuando se suban desde el panel de administración.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        snapshot.forEach(doc => {
+          const design = doc.data();
+          const designCard = document.createElement('div');
+          designCard.className = 'design-card';
+          
+          const designName = design.name || 'Diseño sin nombre';
+          const designCategory = design.category || 'Sin categoría';
+          const designPrice = design.price || '0';
+          const designImageUrl = design.imageUrl || '../img/placeholder.svg';
+          const designFormats = design.formats || 'PNG, PSD';
+          const isGratuito = design.priceType === 'gratis' || design.type === 'gratis' || parseFloat(designPrice) === 0;
+          const priceDisplay = isGratuito ? 'GRATIS' : `S/ ${parseFloat(designPrice).toFixed(2)}`;
+          
+          designCard.innerHTML = `
+            <img src="${designImageUrl}" alt="${designName}" class="design-image" loading="lazy">
+            <div class="design-info">
+              <h4>${designName}</h4>
+              <div class="design-details">
+                <p class="design-category">${designCategory}</p>
+                <p class="design-price">${priceDisplay}</p>
+                <p class="design-formats">Formatos: ${designFormats}</p>
+              </div>
+            </div>
+            <div class="actions">
+              <button onclick="purchaseDesign('${doc.id}')" class="btn-login">Comprar</button>
+              <button onclick="viewDetails('${doc.id}')" class="btn-login" style="background: var(--morado-oscuro)">Ver detalles</button>
+            </div>
+          `;
+          catalogoGrid.appendChild(designCard);
+        });
+        
+        // Actualizar contador
+        const infoBar = document.querySelector('.info-bar strong');
+        if (infoBar) {
+          infoBar.textContent = `${snapshot.size} diseños disponibles`;
+        }
+        
+        console.log(`✅ Cargados ${snapshot.size} diseños manualmente`);
+        
+      } catch (error) {
+        console.error('❌ Error en carga manual:', error);
+        throw error;
+      }
+    }
+
+    // Función para scroll suave hasta los diseños
+    function scrollToDesigns() {
+      const catalogoGrid = document.getElementById('catalogoGrid');
+      if (catalogoGrid) {
+        catalogoGrid.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    
+    // Aliases para compatibilidad
+    window.handleBuyClick = function(designId) {
+      if (typeof handleDownloadClick === 'function') {
+        handleDownloadClick(designId, 'Diseño', 'premium', 0);
+      }
+    };
+    
+    window.viewDetails = function(designId) {
+      if (typeof viewDesignDetails === 'function') {
+        viewDesignDetails(designId);
+      }
+    };
+  </script>
+
+  <script>
+    // Evento de búsqueda
+    const searchInput = document.querySelector('.hero-search input');
+    const searchBtn = document.querySelector('.search-btn');
+
+    async function searchDesigns(query) {
+      query = query.toLowerCase().trim();
+      const catalogoGrid = document.getElementById('catalogoGrid');
+      
+      try {
+        const designsSnap = await db.collection('designs').get();
+        const designs = [];
+        
+        designsSnap.forEach(doc => {
+          const design = doc.data();
+          const designName = design.name || '';
+          const designCategory = design.category || '';
+          const designDescription = design.description || '';
+          
+          if (
+            designName.toLowerCase().includes(query) ||
+            designCategory.toLowerCase().includes(query) ||
+            designDescription.toLowerCase().includes(query)
+          ) {
+            designs.push({ id: doc.id, ...design });
+          }
+        });
+
+        catalogoGrid.innerHTML = '';
+        
+        if (designs.length === 0) {
+          catalogoGrid.innerHTML = '<p class="no-designs">No se encontraron diseños que coincidan con tu búsqueda</p>';
+          return;
+        }
+
+        designs.forEach(design => {
+          const designCard = document.createElement('div');
+          designCard.className = 'design-card';
+          
+          const designName = design.name || 'Diseño sin nombre';
+          const designCategory = design.category || 'Sin categoría';
+          const designPrice = design.price || '0';
+          const designImageUrl = design.imageUrl || '../img/placeholder.svg';
+          const designFormats = design.formats || 'PNG, PSD';
+          
+          designCard.innerHTML = `
+            <img src="${designImageUrl}" alt="${designName}" class="design-image">
+            <h4>${designName}</h4>
+            <div class="design-details">
+              <p class="design-category">${designCategory}</p>
+              <p class="design-price">$${designPrice}</p>
+              <p class="design-formats">Formatos: ${designFormats}</p>
+            </div>
+            <div class="actions">
+              <button onclick="purchaseDesign('${design.id}')" class="btn-login">Comprar</button>
+              <button onclick="viewDetails('${design.id}')" class="btn-login" style="background: var(--morado-oscuro)">Ver detalles</button>
+            </div>
+          `;
+          catalogoGrid.appendChild(designCard);
+        });
+      } catch (error) {
+        console.error('Error al buscar diseños:', error);
+        Swal.fire('Error', 'No se pudo realizar la búsqueda', 'error');
+      }
+    }
+
+    searchBtn.addEventListener('click', () => {
+      searchDesigns(searchInput.value);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        searchDesigns(searchInput.value);
+      }
+    });
+
+  </script>
+
+  <!-- Scripts de inicialización del menú -->
+  <!-- Scripts de inicialización del menú -->
+
+  <!-- ======================= SECCIÓN POR QUÉ ELEGIRNOS ======================= -->
+  <section class="about">
+    <h2 class="section-heading">¿Por qué <span>Elegir Design Reyes?</span></h2>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>🎨 Diseños Exclusivos</h3>
+        <p>Todos nuestros vectores están optimizados para impresión textil y digital.</p>
+      </div>
+      <div class="about-card">
+        <h3>⚡ Descargas Inmediatas</h3>
+        <p>Obtén tus archivos al instante, sin esperas ni formularios molestos.</p>
+      </div>
+      <div class="about-card">
+        <h3>💎 Membresías Premium</h3>
+        <p>Accede a cientos de recursos nuevos cada mes con beneficios exclusivos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= FOOTER ======================= -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <h4>Design Reyes</h4>
+        <p>Tienda especializada en vectores y plantillas deportivas. Inspiramos tu creatividad.</p>
+      </div>
+      <div>
+        <h4>Enlaces útiles</h4>
+        <a href="#">Inicio</a>
+        <a href="membresia.html">Membresía</a>
+        <a href="#">Recursos</a>
+        <a href="#">Contacto</a>
+      </div>
+      <div>
+        <h4>Contáctanos</h4>
+        <p>📞 +51 927 167 421</p>
+        <p>📧 soporte@designreyes.com</p>
+        <p>📍 Perú</p>
+      </div>
+    </div>
+    <p class="footer-copy">© 2025 Design Reyes — Todos los derechos reservados.</p>
+  </footer>
+
+  <a href="https://api.whatsapp.com/send/?phone=51924913748&text&type=phone_number&app_absent=0" class="whatsapp-float" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  </a>
+
+  <script>
+    // Inicializar menú móvil
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuToggle = document.getElementById("menu-toggle");
+      const menuNav = document.getElementById("menu");
+      if (menuToggle && menuNav) {
+        menuToggle.addEventListener("click", () => {
+          menuNav.classList.toggle("active");
+          menuToggle.textContent = menuNav.classList.contains("active") ? "✕" : "☰";
+        });
+      }
+    });
+  </script>
+
+  <!-- ======================= CONTROL DE SESIÓN ======================= -->
+  <script>
+    // =======================================================
+    // 🔐 CONTROL DE SESIÓN (LOGIN / LOGOUT / REDIRECCIÓN)
+    // =======================================================
+    const ADMIN_EMAIL = "hauxwellapaguenoalberson@gmail.com";
+
+    // Espera a que Firebase esté inicializado y disponible como 'auth'
+    if (typeof auth !== 'undefined') {
+      auth.onAuthStateChanged(async (user) => {
+        const loginBtn = document.querySelector('.btn.btn-primary');
+        if (user) {
+          const email = (user.email || '').toLowerCase();
+          if (loginBtn) {
+            loginBtn.innerHTML = `<i class="icon">👋</i><span>Mi cuenta</span>`;
+            loginBtn.onclick = () => {
+              if (email === ADMIN_EMAIL) {
+                window.location.href = "admin.html";
+              } else {
+                window.location.href = "dashboard.html";
+              }
+            };
+          }
+          if (window.location.pathname.includes('login.html')) {
+            if (email === ADMIN_EMAIL) {
+              window.location.href = "admin.html";
+            } else {
+              window.location.href = "dashboard.html";
+            }
+          }
+        } else {
+          if (loginBtn) {
+            loginBtn.innerHTML = `<i class="icon">👤</i><span>Iniciar sesión</span>`;
+            loginBtn.onclick = () => window.location.href = "login.html";
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

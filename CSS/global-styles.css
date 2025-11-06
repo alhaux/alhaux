@@ -1,0 +1,215 @@
+/* Estilos globales mejorados */
+:root {
+  --morado: #9c6bff;
+  --morado-oscuro: #5b2bbd;
+  --morado-hover: #8445ff;
+  --morado-neon: rgba(156,107,255,0.4);
+  --panel-bg: rgba(18,18,18,0.85);
+  --panel-hover: rgba(28,28,38,0.95);
+  --panel-solid: #131013;
+  --borde-suave: rgba(255,255,255,0.1);
+  --texto-claro: #ffffff;
+  --texto-gris: #b6b6b6;
+  --verde-wsp: #25d366;
+  --sombra-neon: 0 0 25px rgba(156,107,255,0.4);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --transition-fast: 0.2s ease;
+  --transition-mid: 0.3s ease;
+  --font-primary: 'Poppins', system-ui, sans-serif;
+}
+
+/* Reset mejorado */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-primary);
+}
+
+body {
+  background: radial-gradient(circle at 20% 0%, #2a0070 0%, #000 70%);
+  color: var(--texto-claro);
+  line-height: 1.6;
+  font-size: 16px;
+  overflow-x: hidden;
+}
+
+/* Enlaces globales mejorados */
+a {
+  color: var(--texto-claro);
+  text-decoration: none;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+a:not(.btn, .logo, .nav-link, .social-link) {
+  padding-bottom: 2px;
+}
+
+a:not(.btn, .logo, .nav-link, .social-link)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--morado);
+  transition: width var(--transition-mid);
+}
+
+a:not(.btn, .logo, .nav-link, .social-link):hover::after {
+  width: 100%;
+}
+
+/* Botones mejorados */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  transition: all var(--transition-mid);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background: var(--morado);
+  color: white;
+  box-shadow: 0 4px 15px rgba(156,107,255,0.3);
+}
+
+.btn-primary:hover {
+  background: var(--morado-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(156,107,255,0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--morado);
+  color: var(--morado);
+}
+
+.btn-secondary:hover {
+  background: rgba(156,107,255,0.1);
+  transform: translateY(-2px);
+}
+
+/* Tarjetas y paneles */
+.card {
+  background: var(--panel-bg);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  transition: all var(--transition-mid);
+  backdrop-filter: blur(10px);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: var(--morado);
+  box-shadow: var(--sombra-neon);
+}
+
+/* Inputs mejorados */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--texto-gris);
+  font-size: 0.9rem;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radius-sm);
+  color: var(--texto-claro);
+  font-size: 0.95rem;
+  transition: all var(--transition-fast);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--morado);
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 0 3px rgba(156,107,255,0.2);
+}
+
+/* Navegación mejorada */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  color: var(--texto-gris);
+}
+
+.nav-link:hover {
+  background: rgba(156,107,255,0.1);
+  color: var(--texto-claro);
+  transform: translateX(5px);
+}
+
+.nav-link.active {
+  background: var(--morado);
+  color: white;
+  font-weight: 500;
+}
+
+/* Iconos y badges */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--morado);
+  color: white;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Utilidades */
+.text-gradient {
+  background: linear-gradient(135deg, var(--texto-claro) 0%, var(--morado) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glassmorphism {
+  background: rgba(18,18,30,0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+}

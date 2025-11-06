@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Firebase Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-box { border: 1px solid #ccc; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #log { background: #f8f9fa; padding: 15px; border-radius: 5px; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test de Firebase Upload</h1>
+    
+    <div class="test-box">
+        <h3>📁 Seleccionar archivo de prueba</h3>
+        <input type="file" id="testFile" accept="image/*,.psd,.ai,.eps">
+        <button onclick="testBasicUpload()">Test Upload Básico</button>
+        <button onclick="testWithRetries()">Test con Reintentos</button>
+        <button onclick="testLargeFile()">Test Archivo Grande</button>
+        <button onclick="testCompression()">Test Solo Compresión</button>
+    </div>
+
+    <div class="test-box">
+        <h3>📊 Estado</h3>
+        <div id="status" class="info">Listo para test</div>
+    </div>
+
+    <div class="test-box">
+        <h3>📝 Log</h3>
+        <div id="log"></div>
+        <button onclick="clearLog()">Limpiar Log</button>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+            authDomain: "design-reyes.firebaseapp.com",
+            projectId: "design-reyes",
+            storageBucket: "design-reyes.appspot.com",
+            messagingSenderId: "454744557781",
+            appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+            measurementId: "G-KCEX0JCC76"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+        const db = firebase.firestore();
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${time}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function setStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `test-box ${type}`;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        async function testBasicUpload() {
+            const fileInput = document.getElementById('testFile');
+            if (!fileInput.files[0]) {
+                alert('Selecciona un archivo primero');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            log(`🚀 Iniciando test básico con: ${file.name} (${(file.size/1024/1024).toFixed(2)}MB)`);
+            setStatus('Subiendo archivo...', 'info');
+
+            try {
+                const timestamp = Date.now();
+                const ref = storage.ref(`test_uploads/test_${timestamp}_${file.name}`);
+                
+                log('📤 Creando referencia de storage...');
+                const uploadTask = ref.put(file);
+                
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        log(`📊 Progreso: ${progress.toFixed(1)}%`);
+                    },
+                    (error) => {
+                        log(`❌ Error durante upload: ${error.message}`);
+                        setStatus(`Error: ${error.message}`, 'error');
+                    },
+                    async () => {
+                        try {
+                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                            log(`✅ Upload completado!`);
+                            log(`🔗 URL: ${downloadURL}`);
+                            setStatus('Upload exitoso!', 'success');
+                        } catch (urlError) {
+                            log(`❌ Error obteniendo URL: ${urlError.message}`);
+                            setStatus(`Error obteniendo URL: ${urlError.message}`, 'error');
+                        }
+                    }
+                );
+
+            } catch (error) {
+                log(`❌ Error iniciando upload: ${error.message}`);
+                setStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testWithRetries() {
+            const fileInput = document.getElementById('testFile');
+            if (!fileInput.files[0]) {
+                alert('Selecciona un archivo primero');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            log(`🔄 Iniciando test con reintentos: ${file.name}`);
+            setStatus('Subiendo con reintentos...', 'info');
+
+            const maxRetries = 3;
+            let attempt = 1;
+
+            while (attempt <= maxRetries) {
+                try {
+                    log(`📤 Intento ${attempt}/${maxRetries}`);
+                    
+                    const timestamp = Date.now();
+                    const ref = storage.ref(`test_retries/retry_${attempt}_${timestamp}_${file.name}`);
+                    
+                    const uploadPromise = new Promise((resolve, reject) => {
+                        const timeout = setTimeout(() => {
+                            reject(new Error('Timeout de 30 segundos'));
+                        }, 30000);
+
+                        const uploadTask = ref.put(file);
+                        uploadTask.on('state_changed',
+                            (snapshot) => {
+                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                if (progress % 25 === 0) {
+                                    log(`📊 Intento ${attempt} - Progreso: ${progress.toFixed(1)}%`);
+                                }
+                            },
+                            (error) => {
+                                clearTimeout(timeout);
+                                reject(error);
+                            },
+                            () => {
+                                clearTimeout(timeout);
+                                uploadTask.snapshot.ref.getDownloadURL().then(resolve).catch(reject);
+                            }
+                        );
+                    });
+
+                    const downloadURL = await uploadPromise;
+                    log(`✅ Éxito en intento ${attempt}!`);
+                    log(`🔗 URL: ${downloadURL}`);
+                    setStatus('Upload con reintentos exitoso!', 'success');
+                    return;
+
+                } catch (error) {
+                    log(`❌ Intento ${attempt} falló: ${error.message}`);
+                    
+                    if (attempt < maxRetries) {
+                        const delay = 2000 * attempt;
+                        log(`⏳ Esperando ${delay}ms antes del siguiente intento...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                }
+                attempt++;
+            }
+
+            log(`❌ Todos los intentos fallaron`);
+            setStatus('Upload falló después de todos los reintentos', 'error');
+        }
+
+        async function testLargeFile() {
+            const fileInput = document.getElementById('testFile');
+            if (!fileInput.files[0]) {
+                alert('Selecciona un archivo primero');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+            
+            if (file.size < 5 * 1024 * 1024) {
+                alert('Este test es para archivos >5MB. Tu archivo es de ' + sizeMB + 'MB');
+                return;
+            }
+
+            log(`🐘 Test archivo grande: ${file.name} (${sizeMB}MB)`);
+            setStatus('Probando upload de archivo grande...', 'info');
+
+            try {
+                // Primero comprimir
+                const compressed = await compressImage(file, 0.5, 1024);
+                const compressedSizeMB = (compressed.size / 1024 / 1024).toFixed(2);
+                log(`🗜️ Comprimido: ${sizeMB}MB → ${compressedSizeMB}MB`);
+
+                // Luego subir
+                const timestamp = Date.now();
+                const ref = storage.ref(`test_large/large_${timestamp}_${compressed.name}`);
+                
+                const uploadPromise = new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error('Timeout de 2 minutos'));
+                    }, 120000); // 2 minutos para archivos grandes
+
+                    const uploadTask = ref.put(compressed);
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            log(`📊 Progreso archivo grande: ${progress.toFixed(1)}%`);
+                        },
+                        (error) => {
+                            clearTimeout(timeout);
+                            reject(error);
+                        },
+                        () => {
+                            clearTimeout(timeout);
+                            uploadTask.snapshot.ref.getDownloadURL().then(resolve).catch(reject);
+                        }
+                    );
+                });
+
+                const downloadURL = await uploadPromise;
+                log(`✅ Archivo grande subido exitosamente!`);
+                log(`🔗 URL: ${downloadURL}`);
+                setStatus('Upload de archivo grande exitoso!', 'success');
+
+            } catch (error) {
+                log(`❌ Error con archivo grande: ${error.message}`);
+                setStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCompression() {
+            const fileInput = document.getElementById('testFile');
+            if (!fileInput.files[0]) {
+                alert('Selecciona un archivo primero');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (!file.type.startsWith('image/')) {
+                alert('Solo funciona con imágenes');
+                return;
+            }
+
+            const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+            log(`🗜️ Test compresión: ${file.name} (${sizeMB}MB)`);
+            setStatus('Comprimiendo imagen...', 'info');
+
+            try {
+                const qualities = [0.8, 0.6, 0.4, 0.3];
+                
+                for (const quality of qualities) {
+                    const compressed = await compressImage(file, quality, 1024);
+                    const compressedSizeMB = (compressed.size / 1024 / 1024).toFixed(2);
+                    const reduction = ((1 - compressed.size/file.size) * 100).toFixed(1);
+                    log(`📊 Calidad ${quality}: ${sizeMB}MB → ${compressedSizeMB}MB (${reduction}% reducción)`);
+                }
+
+                setStatus('Test de compresión completado', 'success');
+
+            } catch (error) {
+                log(`❌ Error en compresión: ${error.message}`);
+                setStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Función de compresión (copia del upload-manager)
+        function compressImage(file, quality = 0.8, maxWidthOrHeight = 1920) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    let { width, height } = img;
+                    
+                    let targetMax = maxWidthOrHeight;
+                    if (file.size > 10 * 1024 * 1024) {
+                        targetMax = Math.min(maxWidthOrHeight, 800);
+                    } else if (file.size > 5 * 1024 * 1024) {
+                        targetMax = Math.min(maxWidthOrHeight, 1024);
+                    }
+                    
+                    if (width > height) {
+                        if (width > targetMax) {
+                            height = (height * targetMax) / width;
+                            width = targetMax;
+                        }
+                    } else {
+                        if (height > targetMax) {
+                            width = (width * targetMax) / height;
+                            height = targetMax;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    canvas.toBlob((blob) => {
+                        const finalFile = blob && blob.size < file.size ? blob : file;
+                        const compressedFile = new File([finalFile], file.name, {
+                            type: file.type,
+                            lastModified: Date.now()
+                        });
+                        resolve(compressedFile);
+                    }, file.type, quality);
+                };
+                
+                img.onerror = function() {
+                    resolve(file);
+                };
+                
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        // Test inicial de conexión
+        window.addEventListener('load', async () => {
+            try {
+                await db.collection('test').limit(1).get();
+                log('✅ Conexión a Firebase establecida');
+            } catch (error) {
+                log(`❌ Error de conexión: ${error.message}`);
+                setStatus(`Error de conexión: ${error.message}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

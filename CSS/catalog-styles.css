@@ -1,0 +1,159 @@
+.design-card {
+  width: 100%;
+  background: rgba(0,0,0,.5);
+  border: 1px solid rgba(156,107,255,.25);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 30px rgba(0,0,0,.8), 0 0 20px rgba(156,107,255,.2);
+  padding: 15px;
+  text-align: center;
+  transition: all var(--transition-mid);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.design-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--morado);
+  box-shadow: 0 0 30px rgba(156,107,255,.6), 0 20px 50px rgba(0,0,0,.9);
+}
+
+.design-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(156,107,255,.2);
+  transition: transform var(--transition-mid);
+}
+
+.design-card:hover img {
+  transform: scale(1.05);
+}
+
+.design-info {
+  padding: 15px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.design-info h4 {
+  color: var(--texto-claro);
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.design-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.design-category {
+  color: var(--morado);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.design-price {
+  font-size: 1.4rem;
+  color: var(--texto-claro);
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(156,107,255,.4);
+}
+
+.design-formats {
+  color: var(--texto-gris);
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+}
+
+.buy-button {
+  background: var(--morado);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  width: 100%;
+  margin-top: 10px;
+}
+
+.buy-button:hover {
+  background: var(--morado-oscuro);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(156,107,255,.4);
+}
+
+/* Estilos para la paginación */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+  padding: 20px 0;
+}
+
+.page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  background: rgba(156,107,255,.1);
+  border: 1px solid rgba(156,107,255,.3);
+  border-radius: var(--radius-sm);
+  color: var(--texto-claro);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.page:hover:not(.disabled) {
+  background: rgba(156,107,255,.2);
+  border-color: var(--morado);
+  transform: translateY(-2px);
+}
+
+.page.active {
+  background: var(--morado);
+  border-color: var(--morado);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 0 20px rgba(156,107,255,.4);
+}
+
+.page.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.page-dots {
+  color: var(--texto-gris);
+  user-select: none;
+}
+
+/* Estilos para mensajes de no resultados */
+.no-designs {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: var(--texto-gris);
+  font-size: 1.1rem;
+  background: rgba(0,0,0,.3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(156,107,255,.2);
+}

@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../img/LOGO DR SOLO BLANCO.png" type="image/png">
+  <title>Panel VIP | Design Reyes</title>
+
+  <style>
+    :root {
+      --bg-main: #050006;
+      --panel-bg: rgba(18, 18, 30, 0.6);
+      --panel-border: rgba(162, 91, 255, 0.4);
+      --panel-glow: rgba(162, 91, 255, 0.4);
+      --text-main: #fff;
+      --text-dim: #bdb6d9;
+      --accent: #a25bff;
+      --accent-strong: #c789ff;
+      --accent-bg: rgba(162, 91, 255, 0.14);
+      --btn-bg: linear-gradient(90deg,#6236ff 0%,#b336ff 100%);
+      --btn-bg-hover: linear-gradient(90deg,#7150ff 0%,#c955ff 100%);
+      --btn-shadow: 0 20px 50px rgba(178, 79, 255, 0.45);
+      --card-radius: 16px;
+      --card-pad: 20px;
+      --section-gap: 28px;
+    }
+
+    /* ======== GENERAL ======== */
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", system-ui, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 20% 20%, rgba(130,0,255,.25) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 80% 30%, rgba(0,120,255,.18) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 50% 80%, rgba(180,0,255,.22) 0%, rgba(0,0,0,0) 60%),
+                  var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px);
+      background-size: 22px 22px;
+      opacity: .12;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px clamp(16px,3vw,32px) 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .vip-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      row-gap: 12px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 20% 20%, #ffffff 0%, #a25bff 60%);
+      box-shadow: 0 0 25px rgba(162,91,255,.55);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .brand-logo img {
+      width: 40px;
+      height: auto;
+      display: block;
+    }
+
+    .brand-text h1 {
+      color: var(--text-main);
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .vip-tag {
+      background: var(--accent-bg);
+      color: var(--accent-strong);
+      font-size: .7rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 3px 8px;
+      border: 1px solid rgba(194,113,255,.5);
+      box-shadow: 0 0 15px rgba(162,91,255,.6);
+    }
+
+    .brand-text p {
+      font-size: .8rem;
+      font-weight: 400;
+      color: var(--text-dim);
+    }
+
+    .logout-btn {
+      color: var(--accent-strong);
+      font-size: .8rem;
+      font-weight: 500;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+    }
+
+    .logout-btn:hover {
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(162,91,255,.6);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--section-gap);
+    }
+
+    @media(min-width: 820px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2,1fr);
+      }
+    }
+
+    @media(min-width: 1100px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(3,1fr);
+      }
+    }
+
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--card-radius);
+      padding: var(--card-pad);
+      position: relative;
+      box-shadow:
+        0 20px 60px rgba(162,91,255,.25),
+        0 0 80px rgba(162,91,255,.4) inset;
+      backdrop-filter: blur(14px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.9) 0%, rgba(162,91,255,.6) 60%);
+      box-shadow: 0 0 20px rgba(162,91,255,.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: #1a0b2b;
+      stroke-width: 1.6;
+    }
+
+    .card-titles h2 {
+      color: var(--text-main);
+      font-size: .95rem;
+      font-weight: 600;
+      line-height: 1.2;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+    }
+
+    .plan-chip {
+      font-size: .7rem;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .card-titles .sub {
+      color: var(--text-dim);
+      font-size: .75rem;
+      font-weight: 400;
+      line-height: 1.3;
+    }
+
+    .info-block {
+      font-size: .8rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      margin-bottom: 14px;
+      word-break: break-word;
+    }
+
+    .label-line {
+      font-size: .75rem;
+      color: var(--text-dim);
+      margin-top: 10px;
+    }
+
+    .value-line {
+      color: var(--text-main);
+      font-size: .85rem;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .btn-primary {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      background: var(--btn-bg);
+      color: #fff;
+      font-size: .9rem;
+      font-weight: 600;
+      padding: 14px 16px;
+      cursor: pointer;
+      box-shadow: var(--btn-shadow);
+      transition: all .18s ease;
+      text-align: center;
+    }
+
+    .btn-primary:hover {
+      background: var(--btn-bg-hover);
+      box-shadow: 0 25px 60px rgba(194,113,255,.6);
+    }
+
+    .btn-paypal {
+      width: 100%;
+      border-radius: 10px;
+      background: #ffc439;
+      border: none;
+      color: #003087;
+      font-weight: 700;
+      font-size: .9rem;
+      padding: 14px 16px;
+      cursor: pointer;
+      box-shadow: 0 15px 40px rgba(255,196,57,.4);
+      transition: all .18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-paypal:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 20px 50px rgba(255,196,57,.55);
+    }
+
+    .btn-cardpay {
+      width: 100%;
+      background: rgba(0,0,0,.6);
+      border: 1px solid rgba(255,255,255,.2);
+      color: #fff;
+      font-size: .9rem;
+      font-weight: 500;
+      padding: 14px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.8);
+      transition: all .18s ease;
+    }
+
+    .btn-cardpay:hover {
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 20px 60px rgba(162,91,255,.4);
+      border-color: var(--accent);
+    }
+
+    .btn-cardpay svg {
+      width: 20px;
+      height: 20px;
+      stroke: #fff;
+    }
+
+    .small-note {
+      font-size: .7rem;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    .benefits-card {
+      grid-column: 1 / -1;
+    }
+
+    .benefits-list {
+      font-size: .8rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      margin-top: 8px;
+    }
+
+    .benefits-list li {
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .benefits-hint {
+      font-size: .7rem;
+      line-height: 1.4;
+      color: var(--text-dim);
+      margin-top: 14px;
+      font-style: italic;
+    }
+
+    /* Estilos para nuevas secciones del dashboard */
+    .membership-options {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .membership-option {
+      background: rgba(162, 91, 255, 0.1);
+      border: 1px solid rgba(162, 91, 255, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .membership-option:hover {
+      background: rgba(162, 91, 255, 0.15);
+      border-color: rgba(162, 91, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .membership-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .membership-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--accent-strong);
+    }
+
+    .membership-price {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--text-main);
+    }
+
+    .membership-features {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 16px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(162, 91, 255, 0.4);
+    }
+
+    .access-note {
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+
+    .access-note strong {
+      color: #ffc107;
+    }
+
+    footer.copy {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: .7rem;
+      margin-top: 40px;
+      z-index: 2;
+    }
+
+    @media(min-width: 768px){
+      .brand-text h1 {
+        font-size: 1.1rem;
+      }
+      .brand-text p {
+        font-size: .8rem;
+      }
+      .logout-btn {
+        font-size: .8rem;
+      }
+      .card-titles h2 {
+        font-size: 1rem;
+      }
+      .card-titles .sub {
+        font-size: .8rem;
+      }
+      .info-block {
+        font-size: .85rem;
+      }
+      .neon-input {
+        font-size: 1rem;
+      }
+      .btn-primary,
+      .btn-paypal,
+      .btn-cardpay {
+        font-size: .9rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <main>
+
+    <header class="vip-header">
+      <div class="brand-left">
+        <div class="brand-logo">
+          <img src="../img/LOGO DR SOLO BLANCO.png" alt="Design Reyes">
+        </div>
+        <div class="brand-text">
+          <h1>
+            Panel de Usuario
+            <span class="vip-tag">Design Reyes</span>
+          </h1>
+          <p>Gestiona tu cuenta y explora nuestro catálogo de diseños</p>
+        </div>
+
+      <a class="logout-btn" href="#" id="logoutBtn">Cerrar sesión</a>
+    </header>
+
+    <section class="dashboard-grid">
+
+      <!-- CARD CUENTA -->
+      <article class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
+            </svg>
+          </div>
+          <div class="card-titles">
+            <h2>Mi cuenta <span class="plan-chip" id="planChip">Gratis</span></h2>
+            <div class="sub">Información de tu perfil y membresía actual</div>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <div class="label-line">Correo</div>
+          <div class="value-line" id="userEmail">cargando...</div>
+
+          <div class="label-line" style="margin-top:14px;">Membresía actual</div>
+          <div class="value-line" id="membershipActual">Ninguna</div>
+
+          <div class="label-line" style="margin-top:14px;">Estado</div>
+          <div class="value-line" id="estadoMembership">Inactivo</div>
+          
+          <div class="label-line" style="margin-top:14px;">Descargas hoy</div>
+          <div class="value-line" id="descargasHoy">0 / 7</div>
+          
+          <div class="label-line" style="margin-top:14px;">Total descargas</div>
+          <div class="value-line" id="descargasCount">0</div>
+        </div>
+      </article>
+
+      <!-- CARD CATÁLOGO -->
+      <article class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </div>
+          <div class="card-titles">
+            <h2>Explorar Catálogo</h2>
+            <div class="sub">Descubre y descarga diseños exclusivos</div>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <div class="label-line">Diseños disponibles</div>
+          <div class="value-line" id="totalDesigns">Cargando...</div>
+
+          <div class="label-line" style="margin-top:10px;">Categorías</div>
+          <div class="value-line">Deportivos, Logos, Mockups, Texturas</div>
+        </div>
+
+        <button class="btn-primary" id="btnCatalogo">
+          <svg viewBox="0 0 24 24" fill="none" style="width: 18px; height: 18px; margin-right: 8px;">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          Explorar Catálogo
+        </button>
+      </article>
+
+      <!-- CARD MEMBRESÍAS -->
+      <article class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3l3 6 6 .9-4.5 4.4 1 6.3L12 18l-5.5 2.6 1-6.3L3 9.9l6-.9z"></path>
+            </svg>
+          </div>
+          <div class="card-titles">
+            <h2>Membresías Premium</h2>
+            <div class="sub">Upgrade tu experiencia con acceso ilimitado</div>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <div class="membership-options">
+            <div class="membership-option">
+              <div class="membership-header">
+                <span class="membership-name">🆓 FREE</span>
+                <span class="membership-price">Gratis</span>
+              </div>
+              <div class="membership-features">
+                ✅ 7 descargas diarias<br>
+                ✅ Diseños básicos<br>
+                ✅ Grupo Free WhatsApp
+              </div>
+            </div>
+            
+            <div class="membership-option">
+              <div class="membership-header">
+                <span class="membership-name">⭐ BASIC</span>
+                <span class="membership-price">$10 USD</span>
+              </div>
+              <div class="membership-features">
+                ✅ Descargas ilimitadas (free)<br>
+                ✅ 13 descargas diarias (premium)<br>
+                ✅ Grupo Premium + 1 mockup/15días
+              </div>
+            </div>
+            
+            <div class="membership-option">
+              <div class="membership-header">
+                <span class="membership-name">💎 PREMIUM</span>
+                <span class="membership-price">$15 USD</span>
+              </div>
+              <div class="membership-features">
+                ✅ 30 descargas diarias<br>
+                ✅ Grupo VIP + Diseños no lanzados<br>
+                ✅ Solicita 4 diseños/mes
+              </div>
+            </div>
+            
+            <div class="membership-option">
+              <div class="membership-header">
+                <span class="membership-name">👑 ELITE</span>
+                <span class="membership-price">$60 USD</span>
+              </div>
+              <div class="membership-features">
+                ✅ Descargas ilimitadas<br>
+                ✅ Grupo Súper VIP + IA's<br>
+                ✅ Mockups exclusivos + 5 diseños/mes
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-secondary" id="btnMembership">
+          <svg viewBox="0 0 24 24" fill="none" style="width: 18px; height: 18px; margin-right: 8px;">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          </svg>
+          Ver Información de Membresías
+        </button>
+      </article>
+
+      <!-- CARD RECURSOS -->
+      <article class="card benefits-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="card-titles">
+            <h2>Recursos Disponibles</h2>
+            <div class="sub">Lo que puedes encontrar en nuestro catálogo</div>
+          </div>
+        </div>
+
+        <ul class="benefits-list">
+          <li>🏆 Diseños deportivos de equipos nacionales e internacionales</li>
+          <li>🎨 Mockups editables y plantillas personalizables</li>
+          <li>👕 Diseños de camisetas exclusivos y únicos</li>
+          <li>✨ Texturas y elementos gráficos premium</li>
+          <li>📱 Formatos optimizados para diferentes usos</li>
+          <li>🔄 Actualizaciones constantes de contenido</li>
+        </ul>
+
+        <div class="access-note">
+          <strong>💡 Nota:</strong> Algunos recursos requieren membresía Premium para descargar.
+        </div>
+      </article>
+
+    </section>
+
+    <footer class="copy">
+      © 2025 Design Reyes — Todos los derechos reservados.
+    </footer>
+
+  </main>
+
+  <!-- Firebase + SweetAlert2 -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Scripts específicos -->
+  <script src="../JS/download-limits-manager.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+      authDomain: "design-reyes.firebaseapp.com",
+      projectId: "design-reyes",
+      storageBucket: "design-reyes.appspot.com",
+      messagingSenderId: "454744557781",
+      appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+      measurementId: "G-KCEX0JCC76"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Redirección segura con fallback (ruta Flask -> archivo local)
+    function safeRedirect(routePath, filePath) {
+      try {
+        fetch(routePath, { method: 'HEAD' })
+          .then(res => {
+            if (res && res.ok) {
+              window.location.href = routePath;
+            } else {
+              window.location.href = filePath;
+            }
+          })
+          .catch(() => window.location.href = filePath);
+      } catch (_) {
+        window.location.href = filePath;
+      }
+    }
+
+    // Cargar información del usuario y estadísticas
+    async function loadUserDashboard(user) {
+      try {
+        // Mostrar email del usuario
+        document.getElementById("userEmail").textContent = user.email || "Desconocido";
+        
+        // Obtener datos del usuario desde Firestore
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          
+          // Actualizar información de membresía
+          const membership = userData.membership || 'ninguna';
+          const membershipDisplay = {
+            'ninguna': 'Sin membresía',
+            'free': 'FREE (Gratis)',
+            'basic': 'BASIC',
+            'premium': 'PREMIUM', 
+            'elite': 'ELITE'
+          };
+          
+          document.getElementById("membershipActual").textContent = membershipDisplay[membership];
+          document.getElementById("planChip").textContent = membership === 'ninguna' || membership === 'free' ? 'Gratis' : 'Premium';
+          document.getElementById("estadoMembership").textContent = (membership === 'ninguna' || membership === 'free') ? 'Inactivo' : 'Activo';
+          
+          // Colorear el chip según el estado
+          const chip = document.getElementById("planChip");
+          if (membership !== 'ninguna' && membership !== 'free') {
+            chip.style.background = 'linear-gradient(90deg, #28a745, #20c997)';
+            chip.style.color = 'white';
+          }
+        }
+        
+        // Cargar estadísticas de descargas del usuario
+        const downloadsSnapshot = await db.collection('downloads')
+          .where('userId', '==', user.uid)
+          .get();
+        
+        // Contar descargas de hoy
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const downloadsToday = await db.collection('downloads')
+          .where('userId', '==', user.uid)
+          .where('timestamp', '>=', firebase.firestore.Timestamp.fromDate(today))
+          .get();
+
+        const totalDownloads = downloadsSnapshot.size;
+        const todayDownloads = downloadsToday.size;
+        
+        // Determinar límite según membresía
+        const membershipLimits = {
+          'free': 7,
+          'basic': 13,
+          'premium': 30,
+          'elite': '∞'
+        };
+        
+        const dailyLimit = membershipLimits[membership] || 7;
+        
+        document.getElementById('descargasCount').textContent = totalDownloads;
+        document.getElementById('descargasHoy').textContent = `${todayDownloads} / ${dailyLimit}`;
+        
+        // Cambiar color si está cerca del límite
+        const descargasHoyElement = document.getElementById('descargasHoy');
+        if (dailyLimit !== '∞') {
+          const percentage = todayDownloads / dailyLimit;
+          if (percentage >= 0.9) {
+            descargasHoyElement.style.color = '#ff6b6b';
+          } else if (percentage >= 0.7) {
+            descargasHoyElement.style.color = '#ffd93d';
+          } else {
+            descargasHoyElement.style.color = '#51cf66';
+          }
+        } else {
+          descargasHoyElement.style.color = '#51cf66';
+        }
+        
+        // Cargar total de diseños disponibles
+        const designsSnapshot = await db.collection('designs').get();
+        document.getElementById("totalDesigns").textContent = `${designsSnapshot.size} diseños`;
+        
+      } catch (error) {
+        console.error('Error cargando dashboard:', error);
+        document.getElementById("membershipActual").textContent = "Error al cargar";
+        document.getElementById("descargasCount").textContent = "0";
+        document.getElementById("descargasHoy").textContent = "0 / 7";
+        document.getElementById("totalDesigns").textContent = "No disponible";
+      }
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        safeRedirect('/login', 'login.html');
+      } else {
+        loadUserDashboard(user);
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      Swal.fire({
+        title: '¿Deseas cerrar sesión?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, salir',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#a25bff',
+        cancelButtonColor: '#444'
+      }).then(result => {
+        if (result.isConfirmed) {
+          auth.signOut().then(() => {
+            safeRedirect('/login', 'login.html');
+          });
+        }
+      });
+    });
+    
+    // Botón para ir al catálogo
+    document.getElementById('btnCatalogo').addEventListener('click', () => {
+      window.location.href = 'Index.html#catalogo';
+    });
+
+    // Botón para ver información de membresías
+    document.getElementById('btnMembership').addEventListener('click', () => {
+      Swal.fire({
+        title: '💎 Membresías Design Reyes',
+        html: `
+          <div style="text-align: left; margin: 20px 0;">
+            <div style="background: linear-gradient(135deg, #6c757d, #495057); padding: 20px; border-radius: 12px; margin-bottom: 15px; color: white;">
+              <h3 style="margin: 0 0 10px 0;">🆓 FREE - Gratis</h3>
+              <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                <li>✅ 7 descargas diarias</li>
+                <li>✅ Acceso a diseños básicos</li>
+                <li>✅ Acceso al grupo Free de WhatsApp</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #28a745, #20c997); padding: 20px; border-radius: 12px; margin-bottom: 15px; color: white;">
+              <h3 style="margin: 0 0 10px 0;">⭐ BASIC - $10 USD</h3>
+              <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                <li>✅ Descargas ilimitadas (diseños free)</li>
+                <li>✅ 13 descargas diarias (diseños premium)</li>
+                <li>✅ Acceso al grupo Premium de WhatsApp</li>
+                <li>✅ 1 mockup cada 15 días</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #6236ff, #b336ff); padding: 20px; border-radius: 12px; margin-bottom: 15px; color: white; border: 2px solid #ffd700;">
+              <div style="text-align: center; background: #ffd700; color: #333; padding: 5px; border-radius: 20px; margin: -10px -10px 10px -10px; font-weight: bold;">🔥 MÁS POPULAR</div>
+              <h3 style="margin: 0 0 10px 0;">💎 PREMIUM - $15 USD</h3>
+              <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                <li>✅ Todos los beneficios anteriores</li>
+                <li>✅ 30 descargas diarias</li>
+                <li>✅ Acceso al grupo VIP de WhatsApp</li>
+                <li>✅ Acceso a diseños no lanzados</li>
+                <li>✅ Solicita 4 diseños cada mes</li>
+              </ul>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #ff6b35, #f7931e); padding: 20px; border-radius: 12px; margin-bottom: 15px; color: white;">
+              <h3 style="margin: 0 0 10px 0;">� ELITE - $60 USD</h3>
+              <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                <li>✅ Todos los beneficios anteriores</li>
+                <li>✅ Descargas ilimitadas</li>
+                <li>✅ Acceso al grupo Súper VIP</li>
+                <li>✅ Solicita 5 diseños cada mes</li>
+                <li>✅ Mockups antes de ser lanzados</li>
+                <li>✅ IA's para mejorar rendimiento</li>
+              </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; color: #333;">
+              <strong>📞 Para activar tu membresía, contáctanos:</strong><br>
+              WhatsApp: <strong>+51 924913748</strong><br>
+              <small>Método de pago: PayPal, transferencia bancaria</small>
+            </div>
+          </div>
+        `,
+        showCloseButton: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Contactar por WhatsApp',
+        confirmButtonColor: '#25d366',
+        width: '650px'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const message = encodeURIComponent('¡Hola! Estoy interesado en activar una membresía en Design Reyes. ¿Podrían brindarme más información sobre los planes disponibles?');
+          window.open(`https://wa.me/51924913748?text=${message}`, '_blank');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

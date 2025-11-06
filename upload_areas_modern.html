@@ -1,0 +1,50 @@
+<!-- Área de upload moderna para imagen de preview -->
+<div class="form-group">
+  <label>📸 Imagen de Preview (Para mostrar en el catálogo)</label>
+  <div class="modern-upload-area" id="fileUploadArea">
+    <div class="upload-initial" id="initialStateImage">
+      <div class="upload-icon">🖼️</div>
+      <div class="upload-text">Arrastra tu imagen de preview aquí</div>
+      <div class="upload-hint">o haz clic para seleccionar (PNG, JPG, WEBP) - Máximo 5MB</div>
+    </div>
+    
+    <div class="upload-preview" id="previewStateImage" style="display: none;">
+      <div class="preview-image-container">
+        <img id="previewImage" src="" alt="Preview">
+        <div class="preview-overlay">
+          <div class="change-text">Cambiar imagen</div>
+        </div>
+      </div>
+      <div class="preview-filename" id="previewFilename"></div>
+    </div>
+    
+    <input type="file" id="designImage" accept="image/*" required />
+  </div>
+  <div class="progress-bar" id="uploadProgress">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- Área de upload moderna para archivo de diseño -->
+<div class="form-group">
+  <label>📦 Archivo del Diseño (Para descargar)</label>
+  <div class="modern-upload-area" id="fileUploadAreaDesign">
+    <div class="upload-initial" id="initialStateDesign">
+      <div class="upload-icon">📁</div>
+      <div class="upload-text">Arrastra el archivo del diseño aquí</div>
+      <div class="upload-hint">Archivo principal para descarga (ZIP, PSD, AI, PDF, etc.) - Máximo 50MB</div>
+    </div>
+    
+    <div class="upload-success" id="successStateDesign" style="display: none;">
+      <div class="success-icon">✨</div>
+      <div class="success-text">¡Archivo seleccionado!</div>
+      <div class="success-filename" id="successFilename"></div>
+      <div class="success-hint">Haz clic para cambiar el archivo</div>
+    </div>
+    
+    <input type="file" id="designFile" accept=".zip,.rar,.psd,.ai,.pdf,.svg,.eps,.png,.jpg,.jpeg" required />
+  </div>
+  <div class="progress-bar" id="uploadProgressDesign">
+    <div class="progress-fill" id="progressFillDesign"></div>
+  </div>
+</div>

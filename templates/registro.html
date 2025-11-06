@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../img/LOGO DR SOLO BLANCO.png" type="image/png">
+  <title>Registro | Design Reyes</title>
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --bg-main: #050006;
+      --accent1: #9c6bff;
+      --accent2: #6f34ff;
+      --text: #ffffff;
+      --text-dim: #b8a9d9;
+      --card-bg: rgba(18,18,30,0.65);
+      --border: rgba(156,107,255,0.4);
+      --shadow: 0 0 40px rgba(162,91,255,0.35);
+      --gradient-btn: linear-gradient(90deg,#6236ff 0%,#b336ff 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at 20% 20%, rgba(130,0,255,.25) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 80% 30%, rgba(0,120,255,.18) 0%, rgba(0,0,0,0) 60%),
+                  radial-gradient(circle at 50% 80%, rgba(180,0,255,.22) 0%, rgba(0,0,0,0) 60%),
+                  var(--bg-main);
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 22px 22px;
+      opacity: .15;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    header {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .logo img {
+      height: 40px;
+      filter: drop-shadow(0 0 15px rgba(162,91,255,.8));
+    }
+
+    nav a {
+      color: var(--text);
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--accent1);
+    }
+
+    .register-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 45px 35px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    .register-container h2 {
+      font-size: 1.6rem;
+      color: var(--accent1);
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 15px rgba(162,91,255,.6);
+    }
+
+    .register-form input {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .register-form input:focus {
+      border: 1px solid var(--accent1);
+      box-shadow: 0 0 15px rgba(162,91,255,.6);
+    }
+
+    .register-form button {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      border: none;
+      background: var(--gradient-btn);
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(162,91,255,0.4);
+      transition: all 0.3s ease;
+    }
+
+    .register-form button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px rgba(162,91,255,0.6);
+    }
+
+    .divider {
+      margin: 30px 0;
+      position: relative;
+      text-align: center;
+    }
+
+    .divider::before, .divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
+    .divider span {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      background: var(--card-bg);
+      padding: 0 10px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 11px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 0 15px rgba(162,91,255,0.3);
+    }
+
+    .social-btn img {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Nuevos estilos para registro solo con Google */
+    .welcome-message {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(156,107,255,0.1);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    
+    .welcome-message p {
+      color: var(--text-dim);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    .google-main {
+      width: 100%;
+      padding: 16px 24px;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      transform: scale(1);
+      transition: all 0.3s ease;
+    }
+    
+    .google-main:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 30px rgba(66, 133, 244, 0.3);
+    }
+    
+    .register-benefits {
+      background: rgba(18,18,30,0.8);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(156,107,255,0.2);
+    }
+    
+    .register-benefits h3 {
+      color: var(--accent1);
+      margin-bottom: 16px;
+      font-size: 18px;
+      text-align: center;
+    }
+    
+    .register-benefits ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .register-benefits li {
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      font-size: 15px;
+      padding-left: 0;
+    }
+    
+    .register-benefits li:last-child {
+      margin-bottom: 0;
+    }
+
+    .facebook-btn {
+      background: rgba(66,103,178,0.2);
+      border-color: rgba(66,103,178,0.4);
+    }
+
+    .register-footer {
+      margin-top: 22px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+
+    .register-footer a {
+      color: var(--accent1);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 600px) {
+      .register-container {
+        padding: 35px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="LOGO DR SOLO BLANCO.png" alt="Design Reyes" />
+    </div>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/login">Iniciar sesión</a>
+    </nav>
+  </header>
+
+  <section class="register-container">
+    <h2>Crear cuenta</h2>
+
+    <div class="welcome-message">
+      <p>Únete a Design Reyes usando tu cuenta de Google para una experiencia segura y personalizada</p>
+    </div>
+
+    <button id="regGoogle" class="social-btn google-main">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+      Crear cuenta con Google
+    </button>
+
+    <div class="register-benefits">
+      <h3>🎉 Al registrarte obtienes:</h3>
+      <ul>
+        <li>🆓 Membresía FREE activada automáticamente</li>
+        <li>📥 7 descargas diarias de diseños básicos</li>
+        <li>💬 Acceso al grupo de WhatsApp FREE</li>
+        <li>📊 Panel personal para gestionar tu cuenta</li>
+        <li>⭐ Opción de upgrade a membresías premium</li>
+      </ul>
+    </div>
+
+    <p class="register-footer">
+      ¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a>
+    </p>
+  </section>
+
+  <footer>© 2025 Design Reyes — Todos los derechos reservados.</footer>
+
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoYEWeYYmhiFadOFlA2SmMFuZab8tMtVU",
+      authDomain: "design-reyes.firebaseapp.com",
+      projectId: "design-reyes",
+      storageBucket: "design-reyes.firebasestorage.app",
+      messagingSenderId: "454744557781",
+      appId: "1:454744557781:web:ed4eaf82abdcc79e2afa5c",
+      measurementId: "G-KCEX0JCC76"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let googleInProgress = false;
+
+    // Verificar si el usuario ya está logueado
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // Si ya está logueado, redirigir al dashboard
+        window.location.href = "dashboard.html";
+      }
+    });
+
+    // Registro con Google
+    document.getElementById("regGoogle").addEventListener("click", async () => {
+      if (googleInProgress) return;
+      
+      googleInProgress = true;
+      const provider = new firebase.auth.GoogleAuthProvider();
+      
+      try {
+        // Mostrar loading
+        Swal.fire({
+          title: 'Creando cuenta...',
+          text: 'Conectando con Google',
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          willOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        
+        console.log("Usuario registrado/logueado:", user.uid);
+        
+        // Guardar/actualizar datos del usuario con estructura consistente
+        await db.collection("users").doc(user.uid).set({
+          name: user.displayName || "",
+          email: user.email,
+          membership: "free", // Membresía FREE por defecto
+          role: "user", // Rol por defecto
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        
+        console.log("Datos guardados en Firestore");
+        
+        // Verificar si es primera vez o login
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        const isNewUser = !userDoc.data()?.createdAt || result.additionalUserInfo?.isNewUser;
+        
+        // Mostrar mensaje apropiado
+        if (isNewUser) {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Cuenta creada exitosamente!',
+            html: `
+              <div style="text-align: center;">
+                <p>¡Bienvenido a Design Reyes, <strong>${user.displayName}</strong>!</p>
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                  <p><strong>🎉 Membresía FREE activada</strong></p>
+                  <p>✅ 7 descargas diarias</p>
+                  <p>✅ Acceso a diseños básicos</p>
+                  <p>✅ Grupo FREE de WhatsApp</p>
+                </div>
+                <p>Serás redirigido a tu panel personal...</p>
+              </div>
+            `,
+            confirmButtonColor: '#28a745',
+            confirmButtonText: 'Continuar al Dashboard',
+            allowOutsideClick: false
+          }).then(() => {
+            setTimeout(() => {
+              try {
+                window.location.href = "dashboard.html";
+              } catch (e) {
+                window.location.replace("dashboard.html");
+              }
+            }, 500);
+          });
+        } else {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Bienvenido de nuevo!',
+            text: `Hola ${user.displayName}. Accediendo a tu dashboard...`,
+            timer: 2000,
+            showConfirmButton: false,
+            allowOutsideClick: false
+          }).then(() => {
+            setTimeout(() => {
+              try {
+                window.location.href = "dashboard.html";
+              } catch (e) {
+                window.location.replace("dashboard.html");
+              }
+            }, 500);
+          });
+        }
+        
+      } catch (err) {
+        console.error("Error con Google:", err);
+        
+        let errorMessage = "Error al crear la cuenta. Inténtalo nuevamente.";
+        
+        if (err.code === 'auth/popup-closed-by-user') {
+          errorMessage = "Registro cancelado.";
+        } else if (err.code === 'auth/popup-blocked') {
+          errorMessage = "Popup bloqueado. Permite popups para este sitio.";
+        } else if (err.code === 'auth/account-exists-with-different-credential') {
+          errorMessage = "Ya existe una cuenta con este email usando otro método.";
+        }
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al crear cuenta',
+          text: errorMessage,
+          confirmButtonColor: '#d33'
+        });
+      } finally {
+        googleInProgress = false;
+      }
+    });
+
+  </script>
+</body>
+</html>
